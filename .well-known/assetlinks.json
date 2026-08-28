@@ -3,6 +3,9 @@
   "target": {
     "namespace": "android_app",
     "package_name": "com.coniferstudios.discrun",
-    "sha256_cert_fingerprints": ["61:EF:9A:04:63:7C:74:F4:70:EE:0E:71:25:49:72:C1:99:29:17:BC:70:48:51:64:60:84:63:25:A1:86:DD:4C"]
+    "sha256_cert_fingerprints": [
+      "1A:8A:A0:BF:8F:1C:75:F5:89:4C:2D:B2:47:5E:79:67:EF:27:3B:B3:EC:F4:5E:9E:DC:FE:D7:2D:0B:71:24:01",
+      "61:EF:9A:04:63:7C:74:F4:70:EE:0E:71:25:49:72:C1:99:29:17:BC:70:48:51:64:60:84:63:25:A1:86:DD:4C"
+    ]
   }
 }]
