@@ -2726,20 +2726,26 @@
         });
       }
 
-      // UI Buttons
+      // UI Buttons (Instant touch & click support for mobile browsers)
       if (this.startBtn) {
-        this.startBtn.addEventListener('click', () => {
+        const handleStartPress = (e) => {
+          if (e) e.stopPropagation();
           if (window.soundEngine) window.soundEngine.init();
           this.startGame();
-        });
+        };
+        this.startBtn.addEventListener('click', handleStartPress);
+        this.startBtn.addEventListener('touchstart', handleStartPress, { passive: true });
       }
 
       if (this.restartBtn) {
-        this.restartBtn.addEventListener('click', () => {
+        const handleRestartPress = (e) => {
           if (!this.canRestart) return;
+          if (e) e.stopPropagation();
           if (window.soundEngine) window.soundEngine.init();
           this.restartGame();
-        });
+        };
+        this.restartBtn.addEventListener('click', handleRestartPress);
+        this.restartBtn.addEventListener('touchstart', handleRestartPress, { passive: true });
       }
 
       // Post-Run Second Chance / Ad Option Modal Buttons
@@ -2870,9 +2876,18 @@
       };
 
       if (this.canvas) {
-        this.canvas.addEventListener('touchstart', handleTouchStart, { passive: true });
-        this.canvas.addEventListener('touchmove', handleTouchMove, { passive: true });
-        this.canvas.addEventListener('touchend', handleTouchEnd, { passive: true });
+        this.canvas.addEventListener('touchstart', (e) => {
+          if (this.state === STATE.PLAYING && e.cancelable) e.preventDefault();
+          handleTouchStart(e);
+        }, { passive: false });
+        this.canvas.addEventListener('touchmove', (e) => {
+          if (this.state === STATE.PLAYING && e.cancelable) e.preventDefault();
+          handleTouchMove(e);
+        }, { passive: false });
+        this.canvas.addEventListener('touchend', (e) => {
+          if (this.state === STATE.PLAYING && e.cancelable) e.preventDefault();
+          handleTouchEnd(e);
+        }, { passive: false });
         this.canvas.addEventListener('touchcancel', handleTouchEnd, { passive: true });
       }
 
