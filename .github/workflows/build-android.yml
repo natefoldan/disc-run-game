@@ -52,31 +52,7 @@ jobs:
           npx cap sync android
 
       - name: Configure Package ID, Version, Fullscreen & Signing
-        run: |
-          V_CODE="${{ github.event.inputs.version_code || '4' }}"
-          V_NAME="${{ github.event.inputs.version_name || '1.0.4' }}"
-          echo "Configuring Version Code: $V_CODE, Version Name: $V_NAME"
-
-          # 1. Update Application ID and Version in build.gradle
-          sed -i "s/versionCode 1/versionCode $V_CODE/g" android/app/build.gradle
-          sed -i "s/versionName \"1.0\"/versionName \"$V_NAME\"/g" android/app/build.gradle
-          sed -i "s/applicationId \"com.discrun.game\"/applicationId \"com.coniferstudios.discrun\"/g" android/app/build.gradle
-
-          # 2. Inject Native Gradle Signing Config
-          sed -i '/buildTypes {/i \
-    signingConfigs {\
-        release {\
-            storeFile file("../../signing.keystore")\
-            storePassword "MM62gVjuAiiq"\
-            keyAlias "my-key-alias"\
-            keyPassword "MM62gVjuAiiq"\
-        }\
-    }' android/app/build.gradle
-
-          sed -i '/release {/a \            signingConfig signingConfigs.release' android/app/build.gradle
-
-          # 3. Set Portrait Orientation in AndroidManifest.xml
-          sed -i 's/<activity /<activity android:screenOrientation="portrait" /g' android/app/src/main/AndroidManifest.xml
+        run: node scripts/configure-android.js "${{ github.event.inputs.version_code || '4' }}" "${{ github.event.inputs.version_name || '1.0.4' }}"
 
       - name: Copy App Launcher Icons to Android Project
         run: |
