@@ -1,19 +1,33 @@
 const fs = require('fs');
 
-const vCode = process.argv[2] || '4';
-const vName = process.argv[3] || '1.0.4';
+const vCode = process.argv[2] || '5';
+const vName = process.argv[3] || '1.0.5';
 
-console.log(`Configuring Android Build: Version Code ${vCode}, Version Name ${vName}`);
+console.log(`Configuring Android Build: Version Code ${vCode}, Version Name ${vName}, Target API Level 35`);
 
-// 1. Configure android/app/build.gradle
+// 1. Configure android/variables.gradle (Upgrade to API 35 / Android 15)
+const varsPath = 'android/variables.gradle';
+if (fs.existsSync(varsPath)) {
+  let vars = fs.readFileSync(varsPath, 'utf8');
+  vars = vars.replace(/compileSdkVersion\s*=\s*\d+/, 'compileSdkVersion = 35');
+  vars = vars.replace(/targetSdkVersion\s*=\s*\d+/, 'targetSdkVersion = 35');
+  fs.writeFileSync(varsPath, vars, 'utf8');
+  console.log('Successfully updated android/variables.gradle to API Level 35!');
+}
+
+// 2. Configure android/app/build.gradle
 const gradlePath = 'android/app/build.gradle';
 if (fs.existsSync(gradlePath)) {
   let gradle = fs.readFileSync(gradlePath, 'utf8');
 
-  // Replace version & appId
+  // Replace version, appId, and force API 35
   gradle = gradle.replace(/versionCode\s+\d+/, `versionCode ${vCode}`);
   gradle = gradle.replace(/versionName\s+"[^"]+"/, `versionName "${vName}"`);
   gradle = gradle.replace(/applicationId\s+"[^"]+"/, 'applicationId "com.coniferstudios.discrun"');
+  gradle = gradle.replace(/compileSdk\s+\d+/, 'compileSdk 35');
+  gradle = gradle.replace(/targetSdk\s+\d+/, 'targetSdk 35');
+  gradle = gradle.replace(/compileSdkVersion\s+\d+/, 'compileSdkVersion 35');
+  gradle = gradle.replace(/targetSdkVersion\s+\d+/, 'targetSdkVersion 35');
 
   // Copy keystore directly into app directory for reliable path resolution
   if (fs.existsSync('signing.keystore')) {
@@ -45,7 +59,7 @@ if (fs.existsSync(gradlePath)) {
   }
 
   fs.writeFileSync(gradlePath, gradle, 'utf8');
-  console.log('Successfully configured build.gradle with release signing!');
+  console.log('Successfully configured build.gradle with release signing and API Level 35!');
 } else {
   console.error('build.gradle not found at ' + gradlePath);
 }

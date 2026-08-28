@@ -6,11 +6,11 @@ on:
       version_code:
         description: 'Android Version Code'
         required: true
-        default: '4'
+        default: '5'
       version_name:
         description: 'Android Version Name'
         required: true
-        default: '1.0.4'
+        default: '1.0.5'
   push:
     branches:
       - main
