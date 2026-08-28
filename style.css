@@ -1384,6 +1384,7 @@ body.hide-ad-banner .ad-banner-placeholder {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 6px;
   width: 100%;
   box-sizing: border-box;
 }
@@ -1392,11 +1393,11 @@ body.hide-ad-banner .ad-banner-placeholder {
   display: inline-block;
   color: #00f0ff;
   font-family: 'Rajdhani', sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   font-weight: 700;
   text-decoration: none;
   opacity: 0.85;
-  margin-right: 14px;
+  margin-right: 10px;
   transition: all 0.2s ease;
 }
 
@@ -1407,20 +1408,25 @@ body.hide-ad-banner .ad-banner-placeholder {
 }
 
 .danger-text-btn {
-  background: none;
-  border: none;
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 12px;
   color: #ef4444;
   font-family: 'Rajdhani', sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   font-weight: 700;
+  padding: 5px 8px;
   cursor: pointer;
-  opacity: 0.75;
-  transition: opacity 0.2s ease;
+  opacity: 0.85;
+  white-space: nowrap;
+  transition: all 0.2s ease;
 }
 
 .danger-text-btn:hover {
   opacity: 1;
-  text-decoration: underline;
+  background: rgba(239, 68, 68, 0.2);
+  border-color: #ef4444;
+  text-decoration: none;
 }
 
 /* Mini Reset Confirmation Modal */
@@ -1779,17 +1785,17 @@ body.hide-ad-banner .ad-banner-placeholder {
 }
 
 .zone-left {
-  flex: 1.1;
+  flex: 1;
   border-right: 1px dashed rgba(0, 240, 255, 0.15);
 }
 
 .zone-center {
-  flex: 1.2;
+  flex: 1.65;
   border-right: 1px dashed rgba(0, 240, 255, 0.15);
 }
 
 .zone-right {
-  flex: 1.1;
+  flex: 1;
 }
 
 .touch-zone-area.touch-active {
@@ -1878,6 +1884,9 @@ body.hide-ad-banner .ad-banner-placeholder {
 }
 
 @media (max-width: 860px) {
+  #controls-hint {
+    display: none !important;
+  }
   .mobile-tabs-container {
     display: flex;
   }
@@ -1979,15 +1988,16 @@ body.hide-ad-banner .ad-banner-placeholder {
   color: #00f0ff;
   font-family: 'Rajdhani', sans-serif;
   font-weight: 700;
-  font-size: 13px;
-  letter-spacing: 1px;
-  padding: 8px 16px;
-  border-radius: 20px;
+  font-size: 11.5px;
+  letter-spacing: 0.5px;
+  padding: 5px 10px;
+  border-radius: 14px;
   cursor: pointer;
+  white-space: nowrap;
   transition: all 0.2s ease;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
 }
 
 .stats-text-btn:hover {
@@ -2124,15 +2134,16 @@ body.hide-ad-banner .ad-banner-placeholder {
   color: #ffea00;
   font-family: 'Rajdhani', sans-serif;
   font-weight: 700;
-  font-size: 13px;
-  letter-spacing: 1px;
-  padding: 8px 14px;
-  border-radius: 20px;
+  font-size: 11.5px;
+  letter-spacing: 0.5px;
+  padding: 5px 10px;
+  border-radius: 14px;
   cursor: pointer;
+  white-space: nowrap;
   transition: all 0.2s ease;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
 }
 
 .achieve-text-btn:hover {

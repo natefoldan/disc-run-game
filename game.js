@@ -505,8 +505,7 @@
   // Calibrated Upgrade Progression Tables (5 Upgrades - Premium Economy)
   const BASE_DUCK_DURATION = 0.50;
   const DUCK_INCREMENT = 0.05;
-  const MAX_DUCK_LEVEL = 10;
-  const DUCK_COSTS = [2500, 6000, 14000, 28000, 50000, 80000, 125000, 190000, 280000];
+  const DUCK_COSTS = [1200, 3000, 7500, 15000, 28000, 48000, 75000, 115000, 175000];
 
   const MAX_SHIELD_LEVEL = 3;
   const SHIELD_COSTS = [5000, 16000, 45000];
@@ -2806,14 +2805,14 @@
             continue;
           }
 
-          if (xPct < 0.35) {
+          if (xPct < 0.275) {
             // LEFT ZONE: Tap anywhere on left side of screen
             this.shiftLane(this.invertedControls ? -1 : 1);
             if (this.zoneLeftGuide) {
               this.zoneLeftGuide.classList.add('touch-active');
               setTimeout(() => { if (this.zoneLeftGuide) this.zoneLeftGuide.classList.remove('touch-active'); }, 140);
             }
-          } else if (xPct > 0.65) {
+          } else if (xPct > 0.725) {
             // RIGHT ZONE: Tap anywhere on right side of screen
             this.shiftLane(this.invertedControls ? 1 : -1);
             if (this.zoneRightGuide) {
@@ -2821,7 +2820,7 @@
               setTimeout(() => { if (this.zoneRightGuide) this.zoneRightGuide.classList.remove('touch-active'); }, 140);
             }
           } else {
-            // CENTER ZONE: Hold anywhere in middle 30% to duck
+            // CENTER ZONE: Hold anywhere in middle 45% to duck (+15% wider zone)
             this.centerDuckTouchId = touch.identifier;
             this.setDucking(true);
             if (this.zoneCenterGuide) {
@@ -2839,7 +2838,7 @@
           const touch = e.touches[i];
           if (touch.identifier === this.centerDuckTouchId) {
             const xPct = touch.clientX / window.innerWidth;
-            if (xPct < 0.30 || xPct > 0.70) {
+            if (xPct < 0.23 || xPct > 0.77) {
               // Drifted out of center zone, release duck
               this.centerDuckTouchId = null;
               this.setDucking(false);
