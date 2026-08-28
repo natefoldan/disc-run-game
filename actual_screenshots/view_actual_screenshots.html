@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Disc Run - Live In-Game Screenshots</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 30px 20px;
+      background: #060919;
+      color: #f1f5f9;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      text-align: center;
+    }
+    h1 {
+      font-size: 26px;
+      color: #00f0ff;
+      margin-bottom: 6px;
+      letter-spacing: 1px;
+    }
+    p.subtitle {
+      color: #94a3b8;
+      font-size: 14px;
+      margin-bottom: 30px;
+    }
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+      gap: 24px;
+      max-width: 1300px;
+      margin: 0 auto;
+    }
+    .gallery-card {
+      background: #0f172a;
+      border: 1px solid rgba(0, 240, 255, 0.3);
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+    .gallery-card:hover {
+      transform: translateY(-3px);
+      border-color: #00f0ff;
+      box-shadow: 0 15px 35px rgba(0, 240, 255, 0.2);
+    }
+    .gallery-card img {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .card-info {
+      padding: 16px 18px;
+      text-align: left;
+    }
+    .card-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #ffea00;
+      margin-bottom: 4px;
+    }
+    .card-desc {
+      font-size: 13px;
+      color: #cbd5e1;
+      line-height: 1.4;
+      margin-bottom: 12px;
+    }
+    .download-btn {
+      display: inline-block;
+      background: linear-gradient(135deg, #00f0ff, #0077ff);
+      color: #030712;
+      text-decoration: none;
+      font-weight: 800;
+      font-size: 12px;
+      padding: 8px 14px;
+      border-radius: 8px;
+      transition: opacity 0.2s;
+    }
+    .download-btn:hover {
+      opacity: 0.9;
+    }
+  </style>
+</head>
+<body>
+  <h1>DISC RUN - AUTHENTIC IN-GAME SCREENSHOTS</h1>
+  <p class="subtitle">Live captured screenshots from the real gameplay engine, menus, and modals</p>
+
+  <div class="gallery-grid">
+    <!-- 1. Menu & Workshop -->
+    <div class="gallery-card">
+      <img src="1_main_menu_and_workshop.png" alt="Main Menu & Upgrade Shop">
+      <div class="card-info">
+        <div class="card-title">1. Main Menu & Workshop Hub</div>
+        <div class="card-desc">Actual dual-panel Start Menu showing Stage Selector, Steering Toggle, 5 Permanent Workshop Upgrades, Bank Balance, and Banner Ad Space.</div>
+        <a href="1_main_menu_and_workshop.png" download class="download-btn">⬇️ Download PNG</a>
+      </div>
+    </div>
+
+    <!-- 2. Live Gameplay Action -->
+    <div class="gallery-card">
+      <img src="5_gameplay_action.png" alt="Live 3D Gameplay Action">
+      <div class="card-info">
+        <div class="card-title">2. Live 3D Gameplay Action</div>
+        <div class="card-desc">Real-time 3D WebGL turntable runner in action with cubic obstacles, rotating overhead duck bars, HUD score, and Perfect Duck streak toast.</div>
+        <a href="5_gameplay_action.png" download class="download-btn">⬇️ Download PNG</a>
+      </div>
+    </div>
+
+    <!-- 3. Post-Run Second Chance Modal -->
+    <div class="gallery-card">
+      <img src="3_postrun_second_chance.png" alt="Post-Run Second Chance Modal">
+      <div class="card-info">
+        <div class="card-title">3. Post-Run Second Chance Screen</div>
+        <div class="card-desc">The immediate loss modal offering Revive & Continue, 2X Run Points breakdown (+Bonus display), and Return to Menu.</div>
+        <a href="3_postrun_second_chance.png" download class="download-btn">⬇️ Download PNG</a>
+      </div>
+    </div>
+
+    <!-- 4. 20 Achievements Trophy Modal -->
+    <div class="gallery-card">
+      <img src="2_achievements_modal.png" alt="20 Runner Achievements Modal">
+      <div class="card-info">
+        <div class="card-title">4. 20 Achievements & Trophies</div>
+        <div class="card-desc">Full interactive Achievements modal showing completion percentage progress bar, total bonus PTS earned, and challenge cards.</div>
+        <a href="2_achievements_modal.png" download class="download-btn">⬇️ Download PNG</a>
+      </div>
+    </div>
+
+    <!-- 5. Lifetime Stats Modal -->
+    <div class="gallery-card">
+      <img src="4_lifetime_stats.png" alt="Lifetime Career Stats Modal">
+      <div class="card-info">
+        <div class="card-title">5. Lifetime Career Stats</div>
+        <div class="card-desc">All-time stats grid tracking High Score, Total Rotations, Best Streaks, Perfect Ducks, Gems, Powerups, Portals, and Saves.</div>
+        <a href="4_lifetime_stats.png" download class="download-btn">⬇️ Download PNG</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

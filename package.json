@@ -1,0 +1,29 @@
+{
+  "name": "disc-run",
+  "version": "1.0.0",
+  "description": "Disc Run - 3D Turntable Runner Game for Android and Web",
+  "main": "index.html",
+  "scripts": {
+    "cap:add:android": "npx cap add android",
+    "cap:sync": "npx cap sync",
+    "cap:open:android": "npx cap open android",
+    "cap:run:android": "npx cap run android"
+  },
+  "dependencies": {
+    "@capacitor/core": "^6.1.2",
+    "@capacitor/android": "^6.1.2",
+    "@capacitor-community/admob": "^6.0.0"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^6.1.2"
+  },
+  "keywords": [
+    "game",
+    "threejs",
+    "runner",
+    "android",
+    "capacitor"
+  ],
+  "author": "",
+  "license": "MIT"
+}

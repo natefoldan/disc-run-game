@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Disc Run - 3D Turntable Runner</title>
+  
+  <!-- Apple iOS & Android PWA Tags -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Disc Run">
+  <meta name="theme-color" content="#080914">
+  <meta name="mobile-web-app-capable" content="yes">
+
+  <link rel="manifest" href="manifest.json">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  
+  <!-- Three.js from CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+<body>
+  <div id="game-container">
+    <canvas id="game-canvas"></canvas>
+
+    <!-- Top Left Controls: Pause, Sound, and Fullscreen Toggle -->
+    <div class="top-bar-actions">
+      <button id="pause-btn" class="icon-btn" title="Pause Game (ESC / P)">⏸</button>
+      <button id="sound-toggle" class="icon-btn" title="Toggle Sound">🔊</button>
+      <button id="fullscreen-btn" class="icon-btn" title="Toggle Fullscreen">⛶</button>
+    </div>
+
+    <!-- Vertical Orbit Revolution Multiplier Bonus Bar (Left Edge) -->
+    <div id="orbit-multiplier-container" class="orbit-meter-container hidden">
+      <div class="orbit-meter-header">
+        <span class="orbit-meter-icon">🚀</span>
+        <div id="orbit-mult-badge" class="orbit-mult-badge">1X</div>
+      </div>
+      
+      <div class="orbit-meter-track">
+        <div id="orbit-meter-fill" class="orbit-meter-fill" style="height: 0%;"></div>
+        <div class="orbit-marker marker-10" title="10X Multiplier (90+ Revs)">10X</div>
+        <div class="orbit-marker marker-7" title="7X Multiplier (60 Revs)">7X</div>
+        <div class="orbit-marker marker-5" title="5X Multiplier (40 Revs)">5X</div>
+        <div class="orbit-marker marker-3" title="3X Multiplier (20 Revs)">3X</div>
+        <div class="orbit-marker marker-2" title="2X Multiplier (10 Revs)">2X</div>
+      </div>
+
+      <div class="orbit-meter-footer">
+        <span id="orbit-revs-text" class="orbit-revs-text">0.0 REV</span>
+        <span id="orbit-next-tier-text" class="orbit-next-text">Next: 10.0</span>
+      </div>
+    </div>
+
+    <!-- Store Promo Header Overlay Banner (Active in promo screenshot captures) -->
+    <div id="store-promo-overlay" class="promo-banner-overlay hidden">
+      <div class="promo-tag" id="promo-tag">DISC RUN • CYBERPUNK RUNNER</div>
+      <div class="promo-title" id="promo-title">SURVIVE THE ROTATING TURNTABLE</div>
+      <div class="promo-subtitle" id="promo-subtitle">Hold to <b>Duck Under Overhead Bars</b> & chain massive Perfect Duck streaks!</div>
+    </div>
+
+    <!-- Top HUD Overlay -->
+    <div id="hud" class="hidden">
+      <div class="hud-panel hud-left">
+        <div class="hud-label">STAGE</div>
+        <div id="hud-stage-name" class="hud-value hud-stage-text">STAGE 1</div>
+        <div id="hud-multiplier-tag" class="hud-subvalue-badge hidden">2X MULTIPLIER</div>
+      </div>
+      
+      <div class="hud-panel hud-center">
+        <div class="hud-label">DUCK STAMINA</div>
+        <div id="duck-stamina-container">
+          <div id="duck-stamina-bar"></div>
+        </div>
+        <div id="duck-stamina-text" class="hud-subvalue">0.50s</div>
+      </div>
+      
+      <div class="hud-panel hud-right">
+        <div class="hud-label">SCORE</div>
+        <div id="score-display" class="hud-value">0</div>
+        <div id="hud-shields-display" class="hud-shield-pills"></div>
+      </div>
+    </div>
+
+    <!-- Active Powerup Indicator floating HUD (Upper Left) -->
+    <div id="active-powerup-bar" class="hidden">
+      <div class="active-powerup-header">
+        <span id="active-powerup-icon" class="active-powerup-icon">⚡</span>
+        <span id="active-powerup-name" class="active-powerup-name">SUPER CHARGE</span>
+      </div>
+      <div class="active-powerup-timer-bg">
+        <div id="active-powerup-timer" class="active-powerup-timer-fill"></div>
+      </div>
+    </div>
+
+    <!-- Ducking Bonus Toast Notification (Combo, Streaks & Multiplier Upgrades) -->
+    <div id="duck-bonus-toast" class="bonus-toast hidden">
+      <div id="toast-text" class="bonus-toast-text">+25 PTS PERFECT DUCK!</div>
+    </div>
+
+    <!-- Ducking Indicator floating UI -->
+    <div id="duck-indicator" class="hidden">
+      <div class="duck-indicator-header">
+        <span class="duck-text">DUCKING</span>
+        <span id="floating-duck-time">0.50s</span>
+      </div>
+      <div id="floating-duck-timer-bar">
+        <div id="floating-duck-timer-fill"></div>
+      </div>
+    </div>
+
+    <!-- Full-Screen Touch Zones Overlay (Active during Mobile / Touch Gameplay) -->
+    <div id="touch-zones-container" class="touch-zones-overlay hidden">
+      <div class="touch-zone-area zone-left" id="zone-left-guide">
+        <div class="zone-guide-content">
+          <span class="zone-icon">◀</span>
+          <span class="zone-text">TAP TO STEER</span>
+        </div>
+      </div>
+      <div class="touch-zone-area zone-center" id="zone-center-guide">
+        <div class="zone-guide-content">
+          <span class="zone-icon">🦆</span>
+          <span class="zone-text">HOLD TO DUCK</span>
+        </div>
+      </div>
+      <div class="touch-zone-area zone-right" id="zone-right-guide">
+        <div class="zone-guide-content">
+          <span class="zone-icon">▶</span>
+          <span class="zone-text">TAP TO STEER</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- On-screen Tutorial & Keybind Hints (Desktop & Mobile Adaptive) -->
+    <div id="controls-hint" class="hidden">
+      <div id="controls-hint-desktop" class="hint-layout-desktop">
+        <div class="hint-item"><span id="hint-keys"><kbd>&larr;</kbd> <kbd>&rarr;</kbd> or <kbd>A</kbd> <kbd>D</kbd></span> Dodge Blocks</div>
+        <div class="hint-item"><kbd>SPACE</kbd> or <kbd>&darr;</kbd> Duck Under Bars (<span id="hint-duck-duration">0.50s</span> Max)</div>
+      </div>
+      <div id="controls-hint-mobile" class="hint-layout-mobile hidden">
+        <div class="hint-item"><span class="touch-zone-pill">TAP LEFT / RIGHT</span> Steer Lanes</div>
+        <div class="hint-item"><span class="touch-zone-pill duck-pill">HOLD CENTER</span> Duck (<span id="hint-duck-duration-mobile">0.50s</span> Max)</div>
+      </div>
+    </div>
+
+    <!-- START SCREEN (Side-by-side Dual Panels on Desktop, Mobile Tabs on Phone) -->
+    <div id="start-screen" class="overlay-screen">
+      <!-- Mobile Responsive Tab Bar -->
+      <div class="mobile-tabs-container">
+        <button class="mobile-tab-btn active" id="start-tab-stages" type="button">🚀 STAGES & PLAY</button>
+        <button class="mobile-tab-btn" id="start-tab-workshop" type="button">⚡ WORKSHOP (<span id="mobile-start-bank-badge">0</span> PTS)</button>
+      </div>
+
+      <div class="start-panels-wrapper">
+        
+        <!-- LEFT PANEL: Stage Selection & Progression -->
+        <div class="screen-content main-menu-panel" id="start-main-panel">
+          <div class="glitch-title" data-text="DISC RUN">DISC RUN</div>
+          <p class="tagline">Survive the rotating obstacle turntable</p>
+
+          <!-- Career Points & Milestone Bar -->
+          <div class="career-stats-box">
+            <div class="career-stats-row">
+              <span class="career-label">🏆 LIFETIME CAREER:</span>
+              <span id="start-career-points" class="career-value">0 PTS</span>
+            </div>
+            <div id="start-milestone-container" class="milestone-container">
+              <div class="milestone-header">
+                <span id="start-milestone-label">Next Stage Unlock</span>
+                <span id="start-milestone-text">0 / 3,500 PTS</span>
+              </div>
+              <div class="milestone-bar-bg">
+                <div id="start-milestone-bar-fill" class="milestone-bar-fill" style="width: 0%;"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Stage Selector List (All 8 Stages) -->
+          <div class="stages-header-row">
+            <span class="stages-header-title">SELECT STAGE:</span>
+            <span class="stages-header-sub">Unlock wider discs & unique hazards</span>
+          </div>
+
+          <div class="stages-list">
+            <!-- Stage 1 -->
+            <div class="stage-card active-stage" data-stage="0">
+              <div class="stage-card-left">
+                <div class="stage-icon-badge stage-icon-cyber">4L</div>
+                <div class="stage-info">
+                  <div class="stage-name-row">
+                    <span class="stage-title">STAGE 1: CYBER GRID</span>
+                    <span class="stage-status-badge unlocked-badge">UNLOCKED</span>
+                  </div>
+                  <p class="stage-theme-desc">4 Lanes • +15 PTS/Rev (1.0x) • Overhead Bars & Blocks</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Stage 2 -->
+            <div class="stage-card locked-stage" data-stage="1">
+              <div class="stage-card-left">
+                <div class="stage-icon-badge stage-icon-solar">5L</div>
+                <div class="stage-info">
+                  <div class="stage-name-row">
+                    <span class="stage-title">STAGE 2: SOLAR FLARE</span>
+                    <span class="stage-status-badge locked-badge" id="stage2-badge">🔒 7,000 PTS</span>
+                  </div>
+                  <p class="stage-theme-desc">5 Lanes • +25 PTS/Rev (1.6x) • Hazard: 🔥 Orbiting Fireballs</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Stage 3 -->
+            <div class="stage-card locked-stage" data-stage="2">
+              <div class="stage-card-left">
+                <div class="stage-icon-badge stage-icon-toxic">6L</div>
+                <div class="stage-info">
+                  <div class="stage-name-row">
+                    <span class="stage-title">STAGE 3: TOXIC CORE</span>
+                    <span class="stage-status-badge locked-badge" id="stage3-badge">🔒 35,000 PTS</span>
+                  </div>
+                  <p class="stage-theme-desc">6 Lanes • +40 PTS/Rev (2.4x) • Hazard: ☣️ Toxic Slime</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Stage 4 -->
+            <div class="stage-card locked-stage" data-stage="3">
+              <div class="stage-card-left">
+                <div class="stage-icon-badge stage-icon-void">7L</div>
+                <div class="stage-info">
+                  <div class="stage-name-row">
+                    <span class="stage-title">STAGE 4: VOID HORIZON</span>
+                    <span class="stage-status-badge locked-badge" id="stage4-badge">🔒 100,000 PTS</span>
+                  </div>
+                  <p class="stage-theme-desc">7 Lanes • +60 PTS/Rev (3.5x) • Hazard: 🌀 Warp Portals (+50 PTS)</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Stage 5 -->
+            <div class="stage-card locked-stage" data-stage="4">
+              <div class="stage-card-left">
+                <div class="stage-icon-badge stage-icon-glacier">8L</div>
+                <div class="stage-info">
+                  <div class="stage-name-row">
+                    <span class="stage-title">STAGE 5: CYBER GLACIER</span>
+                    <span class="stage-status-badge locked-badge" id="stage5-badge">🔒 250,000 PTS</span>
+                  </div>
+                  <p class="stage-theme-desc">8 Lanes • +85 PTS/Rev (5.0x) • Hazard: ❄️ Cryo Ice (Slows)</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Stage 6 -->
+            <div class="stage-card locked-stage" data-stage="5">
+              <div class="stage-card-left">
+                <div class="stage-icon-badge stage-icon-supernova">9L</div>
+                <div class="stage-info">
+                  <div class="stage-name-row">
+                    <span class="stage-title">STAGE 6: SUPERNOVA</span>
+                    <span class="stage-status-badge locked-badge" id="stage6-badge">🔒 600,000 PTS</span>
+                  </div>
+                  <p class="stage-theme-desc">9 Lanes • +120 PTS/Rev (7.2x) • Hazard: ☀️ Plasma Sweepers</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Stage 7 -->
+            <div class="stage-card locked-stage" data-stage="6">
+              <div class="stage-card-left">
+                <div class="stage-icon-badge stage-icon-neon">10L</div>
+                <div class="stage-info">
+                  <div class="stage-name-row">
+                    <span class="stage-title">STAGE 7: NEON HIGHWAY</span>
+                    <span class="stage-status-badge locked-badge" id="stage7-badge">🔒 1,200,000 PTS</span>
+                  </div>
+                  <p class="stage-theme-desc">10 Lanes • +170 PTS/Rev (10.0x) • Hazard: 🚗 Lane Shifter Drone</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Stage 8 -->
+            <div class="stage-card locked-stage" data-stage="7">
+              <div class="stage-card-left">
+                <div class="stage-icon-badge stage-icon-abyss">11L</div>
+                <div class="stage-info">
+                  <div class="stage-name-row">
+                    <span class="stage-title">STAGE 8: FRACTURED ABYSS</span>
+                    <span class="stage-status-badge locked-badge" id="stage8-badge">🔒 2,500,000 PTS</span>
+                  </div>
+                  <p class="stage-theme-desc">11 Lanes • +250 PTS/Rev (15.0x) • Hazard: ⚠️ Collapsing Lanes</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Controls Inversion Setting Switch -->
+          <div class="controls-setting-box">
+            <span class="setting-label">STEERING:</span>
+            <button id="start-controls-toggle" class="setting-toggle-btn" type="button">
+              <span class="swap-icon">⇄</span> <span id="start-controls-label">A◀ D▶ (NORMAL)</span>
+            </button>
+          </div>
+
+          <button id="start-btn" class="glow-button">DROP INTO <span id="start-stage-btn-label">STAGE 1</span><span id="start-key-tip"> (SPACE)</span></button>
+
+          <!-- Small Banner Ad Placeholder for Main Menu -->
+          <div class="ad-banner-placeholder">
+            <span class="ad-badge">ADVERTISEMENT</span>
+            <div class="ad-placeholder-inner">
+              <span class="ad-icon">📱</span>
+              <span class="ad-text">Banner Ad Placeholder (320x50 / Responsive AdMob)</span>
+            </div>
+          </div>
+
+          <div class="menu-footer-actions">
+            <button id="start-stats-btn" class="stats-text-btn" type="button">📊 Career Stats</button>
+            <button id="start-achieve-btn" class="achieve-text-btn" type="button">🏆 Achievements (<span id="start-achieve-count">0/20</span>)</button>
+            <button id="start-reset-data-btn" class="danger-text-btn" type="button">🗑 Reset Data</button>
+          </div>
+        </div>
+
+        <!-- RIGHT PANEL: Dedicated Upgrade Shop (5 Permanent Upgrades) -->
+        <div class="screen-content workshop-panel" id="start-workshop-panel">
+          <div class="workshop-panel-header">
+            <div class="workshop-title-row">
+              <span class="panel-icon">⚡</span>
+              <h2>UPGRADE SHOP</h2>
+            </div>
+            <p class="workshop-tagline">Permanent runner enhancements</p>
+            <div class="shop-bank-pill">
+              <span class="bank-icon">💎</span> BANK: <span id="shop-bank-points">0</span> PTS
+            </div>
+          </div>
+
+          <div class="upgrade-items-container">
+            <!-- 1. Duck Duration -->
+            <div class="upgrade-shop-item">
+              <div class="shop-item-top">
+                <div class="shop-item-icon stamina-icon">🦆</div>
+                <div class="shop-item-details">
+                  <div class="shop-item-header-row">
+                    <span class="shop-item-name">Duck Duration</span>
+                    <span class="shop-item-lvl-badge" id="start-duck-stat">LVL 1 (0.50s)</span>
+                  </div>
+                  <p class="shop-item-desc">Increases max duck time under overhead bars (+0.05s)</p>
+                </div>
+              </div>
+              <button id="start-upgrade-duck-btn" class="upgrade-action-btn" type="button">
+                UPGRADE (+0.05s) &bull; <span id="start-upgrade-duck-cost">2,500</span> PTS
+              </button>
+            </div>
+
+            <!-- 2. Crash Shield -->
+            <div class="upgrade-shop-item">
+              <div class="shop-item-top">
+                <div class="shop-item-icon shield-icon">🛡️</div>
+                <div class="shop-item-details">
+                  <div class="shop-item-header-row">
+                    <span class="shop-item-name">Crash Shield</span>
+                    <span class="shop-item-lvl-badge" id="start-shield-stat">LVL 0 (0/3)</span>
+                  </div>
+                  <p class="shop-item-desc">Absorbs fatal obstacle crashes with forcefield deflector</p>
+                </div>
+              </div>
+              <button id="start-upgrade-shield-btn" class="upgrade-action-btn" type="button">
+                UNLOCK SHIELD &bull; <span id="start-upgrade-shield-cost">5,000</span> PTS
+              </button>
+            </div>
+
+            <!-- 3. Hazard Deflector -->
+            <div class="upgrade-shop-item">
+              <div class="shop-item-top">
+                <div class="shop-item-icon deflector-icon">🧿</div>
+                <div class="shop-item-details">
+                  <div class="shop-item-header-row">
+                    <span class="shop-item-name">Hazard Deflector</span>
+                    <span class="shop-item-lvl-badge" id="start-deflector-stat">LVL 0 (OFF)</span>
+                  </div>
+                  <p class="shop-item-desc">Negates fatal stage hazards (fireballs, slime, sweepers)</p>
+                </div>
+              </div>
+              <button id="start-upgrade-deflector-btn" class="upgrade-action-btn" type="button">
+                UNLOCK DEFLECTOR &bull; <span id="start-upgrade-deflector-cost">8,000</span> PTS
+              </button>
+            </div>
+
+            <!-- 4. Overcharge Battery (Powerup Booster) -->
+            <div class="upgrade-shop-item">
+              <div class="shop-item-top">
+                <div class="shop-item-icon battery-icon">🔋</div>
+                <div class="shop-item-details">
+                  <div class="shop-item-header-row">
+                    <span class="shop-item-name">Powerup Booster</span>
+                    <span class="shop-item-lvl-badge" id="start-booster-stat">LVL 0 (OFF)</span>
+                  </div>
+                  <p class="shop-item-desc">Extends 2X Points & Invincibility duration (+3.0s)</p>
+                </div>
+              </div>
+              <button id="start-upgrade-booster-btn" class="upgrade-action-btn" type="button">
+                UNLOCK BOOSTER &bull; <span id="start-upgrade-booster-cost">6,000</span> PTS
+              </button>
+            </div>
+
+            <!-- 5. Powerup Magnet -->
+            <div class="upgrade-shop-item">
+              <div class="shop-item-top">
+                <div class="shop-item-icon magnet-icon">🧲</div>
+                <div class="shop-item-details">
+                  <div class="shop-item-header-row">
+                    <span class="shop-item-name">Powerup Magnet</span>
+                    <span class="shop-item-lvl-badge" id="start-magnet-stat">LVL 0 (OFF)</span>
+                  </div>
+                  <p class="shop-item-desc">Pulls bonus score gems & powerups across disc lanes</p>
+                </div>
+              </div>
+              <button id="start-upgrade-magnet-btn" class="upgrade-action-btn" type="button">
+                UNLOCK MAGNET &bull; <span id="start-upgrade-magnet-cost">30,000</span> PTS
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- PAUSE SCREEN MODAL -->
+    <div id="pause-screen" class="overlay-screen hidden" style="z-index: 180;">
+      <div class="screen-content pause-modal-box">
+        <h1 class="pause-title">GAME PAUSED</h1>
+        <p class="pause-tagline">Disc paused</p>
+
+        <div class="pause-stats-summary">
+          <div class="pause-stat-item">
+            <span class="pause-stat-label">CURRENT SCORE</span>
+            <span id="pause-current-score" class="pause-stat-val">0</span>
+          </div>
+          <div class="pause-stat-item">
+            <span class="pause-stat-label">ACTIVE STAGE</span>
+            <span id="pause-stage-name" class="pause-stat-val cyan-glow">STAGE 1</span>
+          </div>
+        </div>
+
+        <div class="modal-btn-col">
+          <button id="pause-resume-btn" class="glow-button" type="button">RESUME (ESC)</button>
+          <button id="pause-restart-btn" class="secondary-btn" type="button" style="margin-top: 10px; width: 100%;">RESTART RUN</button>
+          <button id="pause-menu-btn" class="secondary-btn" type="button" style="margin-top: 6px; width: 100%;">EXIT TO MENU</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- GAME OVER SCREEN (Post Run Screen with 1s Cooldown Lockout) -->
+    <div id="game-over-screen" class="overlay-screen hidden">
+      <!-- Mobile Responsive Tab Bar -->
+      <div class="mobile-tabs-container">
+        <button class="mobile-tab-btn active" id="gameover-tab-results" type="button">🏆 RESULTS & RESTART</button>
+        <button class="mobile-tab-btn" id="gameover-tab-workshop" type="button">⚡ WORKSHOP (<span id="mobile-gameover-bank-badge">0</span> PTS)</button>
+      </div>
+
+      <div class="start-panels-wrapper">
+        
+        <!-- LEFT PANEL: Crash Summary, Results, Stage Selector & Drop Again -->
+        <div class="screen-content main-menu-panel" id="gameover-main-panel">
+          <h1 class="game-over-title">CRASHED!</h1>
+          <div id="death-reason" class="death-reason">Hit an obstacle</div>
+          
+          <div class="results-box">
+            <div class="result-row earned-row">
+              <span>POINTS EARNED THIS RUN</span>
+              <span id="earned-points-display" class="result-value green-glow">+0 PTS</span>
+            </div>
+            <div class="result-row highlight-gold-row">
+              <span>TOTAL BANK BALANCE</span>
+              <span id="gameover-bank-points" class="result-value gold-glow">0 PTS</span>
+            </div>
+            <div class="result-row career-row">
+              <span>TOTAL LIFETIME CAREER</span>
+              <span id="gameover-career-points" class="result-value cyan-glow">0 PTS</span>
+            </div>
+            <div class="result-row">
+              <span>ROUND SCORE</span>
+              <span id="final-score" class="result-value">0</span>
+            </div>
+            <div class="result-row">
+              <span>HIGH SCORE</span>
+              <span id="game-over-best-score" class="result-value">0</span>
+            </div>
+          </div>
+
+          <!-- Stage Unlock Progress on Game Over -->
+          <div id="gameover-milestone-container" class="milestone-container milestone-gameover">
+            <div class="milestone-header">
+              <span id="gameover-milestone-label">Next Stage Unlock</span>
+              <span id="gameover-milestone-text">0 / 3,500 PTS</span>
+            </div>
+            <div class="milestone-bar-bg">
+              <div id="gameover-milestone-bar-fill" class="milestone-bar-fill" style="width: 0%;"></div>
+            </div>
+          </div>
+
+          <!-- Stage Selector List (Game Over screen persistence!) -->
+          <div class="stages-header-row">
+            <span class="stages-header-title">CHOOSE STAGE:</span>
+            <span class="stages-header-sub">Switch stage before next drop</span>
+          </div>
+
+          <div class="stages-list">
+            <!-- Stage 1 -->
+            <div class="stage-card active-stage" data-stage="0">
+              <div class="stage-card-left">
+                <div class="stage-icon-badge stage-icon-cyber">4L</div>
+                <div class="stage-info">
+                  <div class="stage-name-row">
+                    <span class="stage-title">STAGE 1: CYBER GRID</span>
+                    <span class="stage-status-badge unlocked-badge">UNLOCKED</span>
+                  </div>
+                  <p class="stage-theme-desc">4 Lanes • +15 PTS/Rev (1.0x) • Overhead Bars & Blocks</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Stage 2 -->
+            <div class="stage-card locked-stage" data-stage="1">
+              <div class="stage-card-left">
+                <div class="stage-icon-badge stage-icon-solar">5L</div>
+                <div class="stage-info">
+                  <div class="stage-name-row">
+                    <span class="stage-title">STAGE 2: SOLAR FLARE</span>
+                    <span class="stage-status-badge locked-badge" id="gameover-stage2-badge">🔒 7,000 PTS</span>
+                  </div>
+                  <p class="stage-theme-desc">5 Lanes • +25 PTS/Rev (1.6x) • Hazard: 🔥 Orbiting Fireballs</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Stage 3 -->
+            <div class="stage-card locked-stage" data-stage="2">
+              <div class="stage-card-left">
+                <div class="stage-icon-badge stage-icon-toxic">6L</div>
+                <div class="stage-info">
+                  <div class="stage-name-row">
+                    <span class="stage-title">STAGE 3: TOXIC CORE</span>
+                    <span class="stage-status-badge locked-badge" id="gameover-stage3-badge">🔒 35,000 PTS</span>
+                  </div>
+                  <p class="stage-theme-desc">6 Lanes • +40 PTS/Rev (2.4x) • Hazard: ☣️ Toxic Slime</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Stage 4 -->
+            <div class="stage-card locked-stage" data-stage="3">
+              <div class="stage-card-left">
+                <div class="stage-icon-badge stage-icon-void">7L</div>
+                <div class="stage-info">
+                  <div class="stage-name-row">
+                    <span class="stage-title">STAGE 4: VOID HORIZON</span>
+                    <span class="stage-status-badge locked-badge" id="gameover-stage4-badge">🔒 100,000 PTS</span>
+                  </div>
+                  <p class="stage-theme-desc">7 Lanes • +60 PTS/Rev (3.5x) • Hazard: 🌀 Warp Portals (+50 PTS)</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Stage 5 -->
+            <div class="stage-card locked-stage" data-stage="4">
+              <div class="stage-card-left">
+                <div class="stage-icon-badge stage-icon-glacier">8L</div>
+                <div class="stage-info">
+                  <div class="stage-name-row">
+                    <span class="stage-title">STAGE 5: CYBER GLACIER</span>
+                    <span class="stage-status-badge locked-badge" id="gameover-stage5-badge">🔒 250,000 PTS</span>
+                  </div>
+                  <p class="stage-theme-desc">8 Lanes • +85 PTS/Rev (5.0x) • Hazard: ❄️ Cryo Ice (Slows)</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Stage 6 -->
+            <div class="stage-card locked-stage" data-stage="5">
+              <div class="stage-card-left">
+                <div class="stage-icon-badge stage-icon-supernova">9L</div>
+                <div class="stage-info">
+                  <div class="stage-name-row">
+                    <span class="stage-title">STAGE 6: SUPERNOVA</span>
+                    <span class="stage-status-badge locked-badge" id="gameover-stage6-badge">🔒 600,000 PTS</span>
+                  </div>
+                  <p class="stage-theme-desc">9 Lanes • +120 PTS/Rev (7.2x) • Hazard: ☀️ Plasma Sweepers</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Stage 7 -->
+            <div class="stage-card locked-stage" data-stage="6">
+              <div class="stage-card-left">
+                <div class="stage-icon-badge stage-icon-neon">10L</div>
+                <div class="stage-info">
+                  <div class="stage-name-row">
+                    <span class="stage-title">STAGE 7: NEON HIGHWAY</span>
+                    <span class="stage-status-badge locked-badge" id="gameover-stage7-badge">🔒 1,200,000 PTS</span>
+                  </div>
+                  <p class="stage-theme-desc">10 Lanes • +170 PTS/Rev (10.0x) • Hazard: 🚗 Lane Shifter Drone</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Stage 8 -->
+            <div class="stage-card locked-stage" data-stage="7">
+              <div class="stage-card-left">
+                <div class="stage-icon-badge stage-icon-abyss">11L</div>
+                <div class="stage-info">
+                  <div class="stage-name-row">
+                    <span class="stage-title">STAGE 8: FRACTURED ABYSS</span>
+                    <span class="stage-status-badge locked-badge" id="gameover-stage8-badge">🔒 2,500,000 PTS</span>
+                  </div>
+                  <p class="stage-theme-desc">11 Lanes • +250 PTS/Rev (15.0x) • Hazard: ⚠️ Collapsing Lanes</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="controls-setting-box">
+            <span class="setting-label">STEERING:</span>
+            <button id="gameover-controls-toggle" class="setting-toggle-btn" type="button">
+              <span class="swap-icon">⇄</span> <span id="gameover-controls-label">A◀ D▶ (NORMAL)</span>
+            </button>
+          </div>
+
+          <button id="restart-btn" class="glow-button">DROP INTO <span id="gameover-stage-btn-label">STAGE 1</span><span id="gameover-key-tip"> (SPACE)</span></button>
+
+          <div class="menu-footer-actions">
+            <button id="gameover-stats-btn" class="stats-text-btn" type="button">📊 Career Stats</button>
+            <button id="gameover-achieve-btn" class="achieve-text-btn" type="button">🏆 Achievements (<span id="gameover-achieve-count">0/20</span>)</button>
+            <button id="gameover-reset-data-btn" class="danger-text-btn" type="button">🗑 Reset Data</button>
+          </div>
+        </div>
+
+        <!-- RIGHT PANEL: Dedicated Upgrade Shop (stays visible after a loss!) -->
+        <div class="screen-content workshop-panel" id="gameover-workshop-panel">
+          <div class="workshop-panel-header">
+            <div class="workshop-title-row">
+              <span class="panel-icon">⚡</span>
+              <h2>UPGRADE SHOP</h2>
+            </div>
+            <p class="workshop-tagline">Spend round winnings on upgrades</p>
+            <div class="shop-bank-pill">
+              <span class="bank-icon">💎</span> BANK: <span id="gameover-shop-bank-points">0</span> PTS
+            </div>
+          </div>
+
+          <div class="upgrade-items-container">
+            <!-- 1. Duck Duration -->
+            <div class="upgrade-shop-item">
+              <div class="shop-item-top">
+                <div class="shop-item-icon stamina-icon">🦆</div>
+                <div class="shop-item-details">
+                  <div class="shop-item-header-row">
+                    <span class="shop-item-name">Duck Duration</span>
+                    <span class="shop-item-lvl-badge" id="gameover-duck-stat">LVL 1 (0.50s)</span>
+                  </div>
+                  <p class="shop-item-desc">Increases max duck time under overhead bars (+0.05s)</p>
+                </div>
+              </div>
+              <button id="gameover-upgrade-duck-btn" class="upgrade-action-btn" type="button">
+                UPGRADE (+0.05s) &bull; <span id="gameover-upgrade-duck-cost">2,500</span> PTS
+              </button>
+            </div>
+
+            <!-- 2. Crash Shield -->
+            <div class="upgrade-shop-item">
+              <div class="shop-item-top">
+                <div class="shop-item-icon shield-icon">🛡️</div>
+                <div class="shop-item-details">
+                  <div class="shop-item-header-row">
+                    <span class="shop-item-name">Crash Shield</span>
+                    <span class="shop-item-lvl-badge" id="gameover-shield-stat">LVL 0 (0/3)</span>
+                  </div>
+                  <p class="shop-item-desc">Absorbs fatal obstacle crashes with forcefield deflector</p>
+                </div>
+              </div>
+              <button id="gameover-upgrade-shield-btn" class="upgrade-action-btn" type="button">
+                UNLOCK SHIELD &bull; <span id="gameover-upgrade-shield-cost">5,000</span> PTS
+              </button>
+            </div>
+
+            <!-- 3. Hazard Deflector -->
+            <div class="upgrade-shop-item">
+              <div class="shop-item-top">
+                <div class="shop-item-icon deflector-icon">🧿</div>
+                <div class="shop-item-details">
+                  <div class="shop-item-header-row">
+                    <span class="shop-item-name">Hazard Deflector</span>
+                    <span class="shop-item-lvl-badge" id="gameover-deflector-stat">LVL 0 (OFF)</span>
+                  </div>
+                  <p class="shop-item-desc">Negates fatal stage hazards (fireballs, slime, sweepers)</p>
+                </div>
+              </div>
+              <button id="gameover-upgrade-deflector-btn" class="upgrade-action-btn" type="button">
+                UNLOCK DEFLECTOR &bull; <span id="gameover-upgrade-deflector-cost">8,000</span> PTS
+              </button>
+            </div>
+
+            <!-- 4. Overcharge Battery (Powerup Booster) -->
+            <div class="upgrade-shop-item">
+              <div class="shop-item-top">
+                <div class="shop-item-icon battery-icon">🔋</div>
+                <div class="shop-item-details">
+                  <div class="shop-item-header-row">
+                    <span class="shop-item-name">Powerup Booster</span>
+                    <span class="shop-item-lvl-badge" id="gameover-booster-stat">LVL 0 (OFF)</span>
+                  </div>
+                  <p class="shop-item-desc">Extends 2X Points & Invincibility duration (+3.0s)</p>
+                </div>
+              </div>
+              <button id="gameover-upgrade-booster-btn" class="upgrade-action-btn" type="button">
+                UNLOCK BOOSTER &bull; <span id="gameover-upgrade-booster-cost">6,000</span> PTS
+              </button>
+            </div>
+
+            <!-- 5. Powerup Magnet -->
+            <div class="upgrade-shop-item">
+              <div class="shop-item-top">
+                <div class="shop-item-icon magnet-icon">🧲</div>
+                <div class="shop-item-details">
+                  <div class="shop-item-header-row">
+                    <span class="shop-item-name">Powerup Magnet</span>
+                    <span class="shop-item-lvl-badge" id="gameover-magnet-stat">LVL 0 (OFF)</span>
+                  </div>
+                  <p class="shop-item-desc">Pulls bonus score gems & powerups across disc lanes</p>
+                </div>
+              </div>
+              <button id="gameover-upgrade-magnet-btn" class="upgrade-action-btn" type="button">
+                UNLOCK MAGNET &bull; <span id="gameover-upgrade-magnet-cost">30,000</span> PTS
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Lifetime Career Stats Modal -->
+    <div id="lifetime-stats-modal" class="overlay-screen hidden" style="z-index: 220;">
+      <div class="screen-content stats-modal-box">
+        <div class="stats-modal-header">
+          <div class="stats-modal-icon">🏆</div>
+          <h2 class="stats-modal-title">LIFETIME CAREER STATS</h2>
+          <p class="stats-modal-subtitle">All-time player statistics & historical records</p>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-card-icon">🌟</div>
+            <div class="stat-card-info">
+              <div class="stat-card-label-box"><span class="stat-card-label">CAREER POINTS</span></div>
+              <span class="stat-card-value" id="stat-career-points">0 PTS</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-icon">🏆</div>
+            <div class="stat-card-info">
+              <div class="stat-card-label-box"><span class="stat-card-label">ALL-TIME HIGH SCORE</span></div>
+              <span class="stat-card-value" id="stat-high-score">0 PTS</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-icon">🏃</div>
+            <div class="stat-card-info">
+              <div class="stat-card-label-box"><span class="stat-card-label">TOTAL RUNS</span></div>
+              <span class="stat-card-value" id="stat-total-runs">0</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-icon">🔄</div>
+            <div class="stat-card-info">
+              <div class="stat-card-label-box"><span class="stat-card-label">TOTAL ROTATIONS</span></div>
+              <span class="stat-card-value" id="stat-total-rotations">0.0</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-icon">🚀</div>
+            <div class="stat-card-info">
+              <div class="stat-card-label-box"><span class="stat-card-label">BEST RUN DISTANCE</span></div>
+              <span class="stat-card-value" id="stat-best-rotations">0.0</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-icon">⏱️</div>
+            <div class="stat-card-info">
+              <div class="stat-card-label-box"><span class="stat-card-label">TOTAL TIME PLAYED</span></div>
+              <span class="stat-card-value" id="stat-total-time">0m 00s</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-icon">⚡</div>
+            <div class="stat-card-info">
+              <div class="stat-card-label-box"><span class="stat-card-label">PERFECT DUCKS</span></div>
+              <span class="stat-card-value" id="stat-perfect-ducks">0</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-icon">🔥</div>
+            <div class="stat-card-info">
+              <div class="stat-card-label-box"><span class="stat-card-label">BEST PERFECT STREAK</span></div>
+              <span class="stat-card-value" id="stat-best-streak">0x</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-icon">🦆</div>
+            <div class="stat-card-info">
+              <div class="stat-card-label-box"><span class="stat-card-label">TOTAL DUCKS</span></div>
+              <span class="stat-card-value" id="stat-total-ducks">0</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-icon">💎</div>
+            <div class="stat-card-info">
+              <div class="stat-card-label-box"><span class="stat-card-label">GEMS COLLECTED</span></div>
+              <span class="stat-card-value" id="stat-gems-collected">0</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-icon">🔋</div>
+            <div class="stat-card-info">
+              <div class="stat-card-label-box"><span class="stat-card-label">POWERUPS COLLECTED</span></div>
+              <span class="stat-card-value" id="stat-powerups-collected">0</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-icon">🌀</div>
+            <div class="stat-card-info">
+              <div class="stat-card-label-box"><span class="stat-card-label">PORTALS TRAVERSED</span></div>
+              <span class="stat-card-value" id="stat-portals-entered">0</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-icon">🧿</div>
+            <div class="stat-card-info">
+              <div class="stat-card-label-box"><span class="stat-card-label">HAZARDS DEFLECTED</span></div>
+              <span class="stat-card-value" id="stat-hazards-deflected">0</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-icon">🛡️</div>
+            <div class="stat-card-info">
+              <div class="stat-card-label-box"><span class="stat-card-label">SHIELDS USED</span></div>
+              <span class="stat-card-value" id="stat-shields-used">0</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-icon">🌌</div>
+            <div class="stat-card-info">
+              <div class="stat-card-label-box"><span class="stat-card-label">HIGHEST STAGE</span></div>
+              <span class="stat-card-value" id="stat-highest-stage">STAGE 1</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-btn-row" style="margin-top: 16px;">
+          <button id="close-stats-btn" class="glow-button" type="button">CLOSE STATS</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Post-Run Second Chance / Ad Option Screen (Appears immediately after loss) -->
+    <div id="post-run-modal" class="overlay-screen hidden" style="z-index: 230;">
+      <div class="screen-content postrun-modal-box">
+        <div class="postrun-header">
+          <div class="postrun-icon">💥</div>
+          <h2 class="postrun-title">RUN OVER</h2>
+          <p id="postrun-death-reason" class="postrun-death-reason">CRASHED INTO OBSTACLE</p>
+        </div>
+
+        <div class="postrun-stats-card">
+          <div class="postrun-stat-item">
+            <span class="postrun-stat-label">RUN SCORE</span>
+            <span id="postrun-run-score" class="postrun-stat-val">0 PTS</span>
+          </div>
+          <div class="postrun-stat-divider"></div>
+          <div class="postrun-stat-item">
+            <span class="postrun-stat-label">ROTATIONS</span>
+            <span id="postrun-run-rotations" class="postrun-stat-val">0.0 ROT</span>
+          </div>
+          <div class="postrun-stat-divider"></div>
+          <div class="postrun-stat-item">
+            <span class="postrun-stat-label">BEST STREAK</span>
+            <span id="postrun-run-streak" class="postrun-stat-val">0x</span>
+          </div>
+        </div>
+
+        <div class="postrun-actions-list">
+          <!-- 1. Revive Option -->
+          <button id="postrun-revive-btn" class="postrun-card-btn postrun-revive-btn" type="button">
+            <div class="postrun-btn-left">
+              <span class="postrun-btn-emoji">❤️</span>
+              <div class="postrun-btn-info">
+                <div class="postrun-btn-title-row">
+                  <span class="postrun-btn-title">REVIVE & CONTINUE</span>
+                  <span id="postrun-revive-badge" class="postrun-badge revive-badge">1 UP</span>
+                </div>
+                <span class="postrun-btn-desc">🎬 Watch Ad &bull; Resume run with 2.5s shield</span>
+              </div>
+            </div>
+          </button>
+
+          <!-- 2. 2X Points Option (Explicitly indicates exact points to be gained) -->
+          <button id="postrun-double-btn" class="postrun-card-btn postrun-double-btn" type="button">
+            <div class="postrun-btn-left">
+              <span class="postrun-btn-emoji">⭐</span>
+              <div class="postrun-btn-info">
+                <div class="postrun-btn-title-row">
+                  <span class="postrun-btn-title">2X RUN POINTS</span>
+                  <span id="postrun-double-badge" class="postrun-badge double-badge">+0 PTS BONUS</span>
+                </div>
+                <span id="postrun-double-desc" class="postrun-btn-desc">🎬 Watch Ad &bull; Claim +0 PTS Bonus (Total: 0 PTS)</span>
+              </div>
+            </div>
+          </button>
+
+          <!-- 3. Return to Menu Without Watching -->
+          <button id="postrun-skip-btn" class="postrun-card-btn postrun-skip-btn" type="button">
+            <div class="postrun-btn-left">
+              <span class="postrun-btn-emoji">➡️</span>
+              <div class="postrun-btn-info">
+                <div class="postrun-btn-title-row">
+                  <span class="postrun-btn-title">RETURN TO MENU</span>
+                  <span class="postrun-badge skip-badge">STANDARD</span>
+                </div>
+                <span id="postrun-skip-desc" class="postrun-btn-desc">Bank standard +0 PTS & go to Workshop / Stages</span>
+              </div>
+            </div>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Achievements & Trophies Modal (20 Achievements) -->
+    <div id="achievements-modal" class="overlay-screen hidden" style="z-index: 220;">
+      <div class="screen-content achievements-modal-box">
+        <div class="achieve-modal-header">
+          <div class="achieve-modal-icon">🏆</div>
+          <h2 class="achieve-modal-title">RUNNER ACHIEVEMENTS</h2>
+          <p class="achieve-modal-subtitle">Complete challenges to earn bonus points and trophies</p>
+          <div class="achieve-overall-progress">
+            <div class="achieve-progress-header">
+              <span id="achieve-summary-text">0 / 20 UNLOCKED (0%)</span>
+              <span id="achieve-total-points-earned" class="achieve-pts-badge">+0 PTS EARNED</span>
+            </div>
+            <div class="achieve-progress-bar-bg">
+              <div id="achieve-progress-bar-fill" class="achieve-progress-bar-fill" style="width: 0%;"></div>
+            </div>
+          </div>
+        </div>
+
+        <div id="achievements-list-container" class="achievements-list">
+          <!-- Populated dynamically via game.js -->
+        </div>
+
+        <div class="modal-btn-row" style="margin-top: 16px;">
+          <button id="close-achieve-btn" class="glow-button" type="button">CLOSE ACHIEVEMENTS</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stage Unlocked Celebratory Popup Modal (Pauses game, resumes on close) -->
+    <div id="stage-unlocked-modal" class="overlay-screen hidden" style="z-index: 210;">
+      <div class="screen-content unlock-modal-box">
+        <div class="unlock-confetti-badge">🎉</div>
+        <div class="unlock-super-title">NEW STAGE UNLOCKED!</div>
+        <h2 id="unlocked-stage-title" class="unlocked-stage-name">STAGE 2: SOLAR FLARE</h2>
+        <p id="unlocked-stage-desc" class="unlocked-stage-details">5 Lanes • Molten Amber • Hazard: 🔥 Fireballs</p>
+        <p class="resume-note">Tap anywhere to close • Resumes in 1s</p>
+        <div class="modal-btn-row" style="margin-top: 14px;">
+          <button id="unlocked-close-btn" class="glow-button" type="button">CONTINUE</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- First Time Upgrade Available Modal (Prompt to visit Workshop) -->
+    <div id="upgrade-available-modal" class="overlay-screen hidden" style="z-index: 215;">
+      <div class="screen-content unlock-modal-box">
+        <div class="unlock-confetti-badge" style="filter: drop-shadow(0 0 16px #ffcc00);">⚡</div>
+        <div class="unlock-super-title" style="color: #ffcc00;">UPGRADE AVAILABLE!</div>
+        <h2 class="unlocked-stage-name" style="color: #00f0ff; font-size: 20px; margin: 6px 0;">POWER UP YOUR RUNNER</h2>
+        <p class="unlocked-stage-details" style="color: #cbd5e1; font-size: 13px; margin-bottom: 14px; line-height: 1.4;">
+          You earned enough points to unlock your first <b>Workshop Upgrade</b>! Increase your duck duration, crash shields, or hazard deflectors to survive longer runs.
+        </p>
+        <div class="modal-btn-row" style="margin-top: 10px; gap: 10px; display: flex;">
+          <button id="upgrade-prompt-go-btn" class="glow-button" style="flex: 1.2;" type="button">⚡ OPEN WORKSHOP</button>
+          <button id="upgrade-prompt-close-btn" class="secondary-btn" style="flex: 1;" type="button">MAYBE LATER</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Reset Progress Confirmation Modal -->
+    <div id="reset-confirm-modal" class="overlay-screen hidden" style="z-index: 200;">
+      <div class="screen-content mini-modal">
+        <h2 class="danger-modal-title">RESET ALL PROGRESS?</h2>
+        <p class="modal-desc">This will erase your <strong>Lifetime Career Points</strong>, <strong>Unlocked Stages</strong>, <strong>Bank Balance</strong>, and all <strong>Shop Upgrades</strong> back to Stage 1 & Level 1. This cannot be undone.</p>
+        <div class="modal-btn-row">
+          <button id="cancel-reset-btn" class="secondary-btn" type="button">CANCEL</button>
+          <button id="confirm-reset-btn" class="danger-btn" type="button">YES, RESET ALL</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mobile Touch On-Screen Controls -->
+    <div id="mobile-controls">
+      <button id="touch-left" class="touch-btn" aria-label="Steer Left">&larr;</button>
+      <button id="touch-duck" class="touch-btn duck-btn" aria-label="Duck">
+        <span>DUCK</span>
+        <span id="touch-duck-timer" class="touch-subtext">0.50s</span>
+      </button>
+      <button id="touch-right" class="touch-btn" aria-label="Steer Right">&rarr;</button>
+    </div>
+  </div>
+
+  <script src="audio.js"></script>
+  <script src="game.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').catch(() => {});
+      });
+    }
+  </script>
+</body>
+</html>

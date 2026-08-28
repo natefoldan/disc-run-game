@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Disc Run - Store Promo Screenshot Generator</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Rajdhani:wght@600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      background: #060714;
+      font-family: 'Rajdhani', sans-serif;
+      overflow: hidden;
+      width: 1280px;
+      height: 720px;
+      position: relative;
+    }
+    #game-frame {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 1280px;
+      height: 720px;
+      border: none;
+      z-index: 1;
+    }
+    /* Sleek App Store Promotional Header Banner */
+    .promo-banner-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      padding: 22px 30px 30px 30px;
+      background: linear-gradient(180deg, rgba(4, 7, 20, 0.94) 0%, rgba(4, 7, 20, 0.75) 60%, rgba(4, 7, 20, 0) 100%);
+      z-index: 999;
+      text-align: center;
+      pointer-events: none;
+    }
+    .promo-tag {
+      display: inline-block;
+      font-family: 'Orbitron', monospace;
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 3px;
+      color: #00f0ff;
+      background: rgba(0, 240, 255, 0.12);
+      border: 1px solid rgba(0, 240, 255, 0.4);
+      padding: 3px 12px;
+      border-radius: 12px;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+      text-shadow: 0 0 10px rgba(0, 240, 255, 0.8);
+    }
+    .promo-title {
+      font-family: 'Orbitron', monospace;
+      font-size: 30px;
+      font-weight: 900;
+      letter-spacing: 2.5px;
+      color: #ffffff;
+      text-shadow: 0 0 20px #00f0ff, 0 4px 12px rgba(0, 0, 0, 0.9);
+      margin-bottom: 4px;
+      text-transform: uppercase;
+    }
+    .promo-subtitle {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: #94a3b8;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9);
+    }
+    .promo-subtitle b {
+      color: #ffea00;
+    }
+  </style>
+</head>
+<body>
+  <iframe id="game-frame"></iframe>
+
+  <div class="promo-banner-overlay" id="promo-banner">
+    <div class="promo-tag" id="promo-tag">DISC RUN • CYBERPUNK RUNNER</div>
+    <div class="promo-title" id="promo-title">SURVIVE THE ROTATING TURNTABLE</div>
+    <div class="promo-subtitle" id="promo-subtitle">Hold to <b>Duck Under Overhead Bars</b> & build massive Perfect Duck streaks!</div>
+  </div>
+
+  <script>
+    const PROMO_CARDS = {
+      'promo1': {
+        screen: 'gameplay_stage1',
+        tag: 'DISC RUN • DUCK & DODGE RUNNER',
+        title: 'SURVIVE THE ROTATING TURNTABLE',
+        subtitle: 'Hold to <b>Duck Under Overhead Bars</b> & chain massive Perfect Duck streaks!'
+      },
+      'promo2': {
+        screen: 'gameplay_stage2',
+        tag: 'STAGE 2 • SOLAR FLARE',
+        title: 'DODGE ORBITING FIREBALLS',
+        subtitle: 'Dynamic stage hazards, molten tracks & high-speed radial navigation!'
+      },
+      'promo3': {
+        screen: 'gameplay_stage3',
+        tag: 'STAGE 3 • TOXIC CORE',
+        title: 'DEPLOY CRASH SHIELDS & DEFLECTORS',
+        subtitle: 'Absorb fatal obstacles & deflect acid slime pools with workshop upgrades!'
+      },
+      'promo4': {
+        screen: 'gameplay_stage4',
+        tag: 'STAGE 4 • VOID HORIZON',
+        title: 'WARP THROUGH QUANTUM PORTALS',
+        subtitle: 'Traverse instant teleporters across 7 glowing sci-fi lanes!'
+      },
+      'promo5': {
+        screen: 'gameplay_stage5',
+        tag: 'DYNAMIC SCORE MULTIPLIERS',
+        title: 'CHARGE 10X ORBIT SURGES',
+        subtitle: 'Every 10 revolutions charges the vertical bar for <b>massive global multipliers!</b>'
+      },
+      'promo6': {
+        screen: 'gameplay_stage8',
+        tag: 'STAGE 8 • FRACTURED ABYSS',
+        title: 'MASTER 8 EXPANDING WORLDS',
+        subtitle: 'Survive up to <b>11 high-speed lanes</b> with intense collapsing abyss tracks!'
+      }
+    };
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const cardKey = urlParams.get('card') || 'promo1';
+    const config = PROMO_CARDS[cardKey] || PROMO_CARDS['promo1'];
+
+    document.getElementById('promo-tag').textContent = config.tag;
+    document.getElementById('promo-title').textContent = config.title;
+    document.getElementById('promo-subtitle').innerHTML = config.subtitle;
+
+    const frame = document.getElementById('game-frame');
+    frame.src = `../index.html?screen=${config.screen}`;
+  </script>
+</body>
+</html>

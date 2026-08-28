@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Disc Run - Sound Effects Exporter & Soundboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      background-color: #080914;
+      font-family: 'Rajdhani', -apple-system, BlinkMacSystemFont, sans-serif;
+      color: #fff;
+      padding: 30px 20px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .container {
+      max-width: 860px;
+      width: 100%;
+    }
+    header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    h1 {
+      font-family: 'Orbitron', monospace;
+      font-size: 32px;
+      font-weight: 900;
+      color: #00f0ff;
+      letter-spacing: 2px;
+      text-shadow: 0 0 20px rgba(0, 240, 255, 0.6);
+      margin-bottom: 6px;
+    }
+    p.subtitle {
+      font-size: 16px;
+      color: #94a3b8;
+    }
+    .actions-bar {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+    .btn {
+      font-family: 'Orbitron', monospace;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      border: 1px solid #00f0ff;
+      background: rgba(0, 240, 255, 0.15);
+      color: #00f0ff;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .btn:hover {
+      background: #00f0ff;
+      color: #080914;
+      box-shadow: 0 0 15px rgba(0, 240, 255, 0.6);
+    }
+    .btn-download-all {
+      background: linear-gradient(135deg, #00f0ff, #0088ff);
+      color: #030712;
+      border: none;
+      box-shadow: 0 0 20px rgba(0, 240, 255, 0.4);
+    }
+    .btn-download-all:hover {
+      box-shadow: 0 0 30px rgba(0, 240, 255, 0.8);
+      transform: translateY(-1px);
+    }
+    .sound-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+      gap: 16px;
+    }
+    .sound-card {
+      background: rgba(15, 20, 40, 0.85);
+      border: 1px solid rgba(0, 240, 255, 0.25);
+      border-radius: 12px;
+      padding: 16px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+    .sound-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(0, 240, 255, 0.6);
+    }
+    .sound-info {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .sound-name {
+      font-family: 'Orbitron', monospace;
+      font-size: 15px;
+      font-weight: 700;
+      color: #fff;
+    }
+    .sound-desc {
+      font-size: 13px;
+      color: #94a3b8;
+    }
+    .sound-controls {
+      display: flex;
+      gap: 8px;
+    }
+    .icon-btn {
+      padding: 8px 12px;
+      font-size: 12px;
+      border-radius: 6px;
+      font-family: 'Orbitron', monospace;
+      font-weight: 700;
+      border: 1px solid rgba(0, 240, 255, 0.4);
+      background: rgba(0, 240, 255, 0.1);
+      color: #00f0ff;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.2s ease;
+    }
+    .icon-btn:hover {
+      background: #00f0ff;
+      color: #030712;
+      box-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+    }
+    .icon-btn.download-btn {
+      border-color: rgba(0, 255, 170, 0.4);
+      background: rgba(0, 255, 170, 0.1);
+      color: #00ffaa;
+    }
+    .icon-btn.download-btn:hover {
+      background: #00ffaa;
+      color: #030712;
+      box-shadow: 0 0 10px rgba(0, 255, 170, 0.5);
+    }
+    footer {
+      margin-top: 40px;
+      text-align: center;
+      font-size: 13px;
+      color: #64748b;
+    }
+    footer a {
+      color: #00f0ff;
+      text-decoration: none;
+    }
+    footer a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>DISC RUN AUDIO EXPORTER</h1>
+      <p class="subtitle">Preview & download all synthesized game sound effects as standard .WAV files</p>
+    </header>
+
+    <div class="actions-bar">
+      <button id="download-all-btn" class="btn btn-download-all">📦 DOWNLOAD ALL SOUNDS (.WAV)</button>
+      <a href="index.html" class="btn">🎮 RETURN TO GAME</a>
+    </div>
+
+    <div id="sound-list" class="sound-grid">
+      <!-- Sound cards inserted by JS -->
+    </div>
+
+    <footer>
+      <p>Procedural Web Audio synthesizer for <a href="index.html">Disc Run</a> &bull; Zero external dependencies</p>
+    </footer>
+  </div>
+
+  <script>
+    // --- Sound Definitions and Offline Synthesizers ---
+    const SAMPLE_RATE = 44100;
+
+    const SOUNDS = [
+      {
+        id: 'drop_impact',
+        name: 'Drop Impact Thump',
+        filename: 'disc_run_drop_impact.wav',
+        desc: 'Sub bass thud + spring resonance when player lands on turntable',
+        duration: 0.35,
+        render: (ctx) => {
+          const now = 0;
+          // Sub thump
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(140, now);
+          osc.frequency.exponentialRampToValueAtTime(30, now + 0.25);
+          gain.gain.setValueAtTime(0.8, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.26);
+
+          // Spring resonance
+          const osc2 = ctx.createOscillator();
+          const gain2 = ctx.createGain();
+          osc2.type = 'triangle';
+          osc2.frequency.setValueAtTime(380, now);
+          osc2.frequency.exponentialRampToValueAtTime(80, now + 0.18);
+          gain2.gain.setValueAtTime(0.4, now);
+          gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
+          osc2.connect(gain2);
+          gain2.connect(ctx.destination);
+          osc2.start(now);
+          osc2.stop(now + 0.2);
+        }
+      },
+      {
+        id: 'duck_squash',
+        name: 'Duck / Squash',
+        filename: 'disc_run_duck_squash.wav',
+        desc: 'Low-pass swept sawtooth squish when player ducks under bars',
+        duration: 0.2,
+        render: (ctx) => {
+          const now = 0;
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(260, now);
+          osc.frequency.exponentialRampToValueAtTime(65, now + 0.12);
+          const filter = ctx.createBiquadFilter();
+          filter.type = 'lowpass';
+          filter.frequency.setValueAtTime(1200, now);
+          filter.frequency.exponentialRampToValueAtTime(200, now + 0.12);
+          gain.gain.setValueAtTime(0.3, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+          osc.connect(filter);
+          filter.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.13);
+        }
+      },
+      {
+        id: 'unduck_release',
+        name: 'Unduck / Spring Up',
+        filename: 'disc_run_unduck_spring.wav',
+        desc: 'Upward pitch sine chirp when releasing duck',
+        duration: 0.18,
+        render: (ctx) => {
+          const now = 0;
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(90, now);
+          osc.frequency.exponentialRampToValueAtTime(320, now + 0.1);
+          gain.gain.setValueAtTime(0.3, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.11);
+        }
+      },
+      {
+        id: 'lane_switch',
+        name: 'Lane Switch Whoosh',
+        filename: 'disc_run_lane_switch.wav',
+        desc: 'Quick whoosh chirp when dodging left or right',
+        duration: 0.15,
+        render: (ctx) => {
+          const now = 0;
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(300, now);
+          osc.frequency.exponentialRampToValueAtTime(450, now + 0.08);
+          gain.gain.setValueAtTime(0.25, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.09);
+        }
+      },
+      {
+        id: 'score_chime',
+        name: 'Score Clear Chime',
+        filename: 'disc_run_score_chime.wav',
+        desc: 'Crisp sine chime when passing an obstacle',
+        duration: 0.25,
+        render: (ctx) => {
+          const now = 0;
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(783.99, now); // G5
+          gain.gain.setValueAtTime(0.25, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.21);
+        }
+      },
+      {
+        id: 'duck_bonus',
+        name: 'Skilled Duck Bonus (+150)',
+        filename: 'disc_run_duck_bonus.wav',
+        desc: 'Upward crystal chime arpeggio for ducking under an overhead bar',
+        duration: 0.35,
+        render: (ctx) => {
+          const now = 0;
+          const notes = [659.25, 987.77, 1318.51]; // E5, B5, E6
+          notes.forEach((freq, i) => {
+            const startTime = now + i * 0.045;
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(freq, startTime);
+            gain.gain.setValueAtTime(0.3, startTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.2);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(startTime);
+            osc.stop(startTime + 0.22);
+          });
+        }
+      },
+      {
+        id: 'powerup_fanfare',
+        name: 'Powerup Fanfare (2X / Invincible)',
+        filename: 'disc_run_powerup_fanfare.wav',
+        desc: '5-note ascending hyper synth arpeggio on powerup pickup',
+        duration: 0.45,
+        render: (ctx) => {
+          const now = 0;
+          const notes = [587.33, 739.99, 880.00, 1174.66, 1479.98]; // D5, F#5, A5, D6, F#6
+          notes.forEach((freq, i) => {
+            const startTime = now + i * 0.045;
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(freq, startTime);
+            gain.gain.setValueAtTime(0.35, startTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.16);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(startTime);
+            osc.stop(startTime + 0.17);
+          });
+        }
+      },
+      {
+        id: 'gem_pickup',
+        name: 'Bonus Score Gem (+250)',
+        filename: 'disc_run_gem_pickup.wav',
+        desc: 'Dual crystal chime on bonus gem pickup',
+        duration: 0.25,
+        render: (ctx) => {
+          const now = 0;
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(987.77, now);
+          osc.frequency.exponentialRampToValueAtTime(1318.51, now + 0.08);
+          gain.gain.setValueAtTime(0.3, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.19);
+        }
+      },
+      {
+        id: 'shield_pop',
+        name: 'Crash Shield Deflector Blast',
+        filename: 'disc_run_shield_deflect.wav',
+        desc: 'Laser forcefield burst absorbing fatal crash',
+        duration: 0.4,
+        render: (ctx) => {
+          const now = 0;
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(800, now);
+          osc.frequency.exponentialRampToValueAtTime(100, now + 0.3);
+          const filter = ctx.createBiquadFilter();
+          filter.type = 'bandpass';
+          filter.frequency.setValueAtTime(1500, now);
+          filter.frequency.exponentialRampToValueAtTime(300, now + 0.3);
+          filter.Q.setValueAtTime(4.0, now);
+          gain.gain.setValueAtTime(0.55, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+          osc.connect(filter);
+          filter.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.31);
+        }
+      },
+      {
+        id: 'crash_explosion',
+        name: 'Crash Explosion',
+        filename: 'disc_run_crash_explosion.wav',
+        desc: 'Filtered noise impact and sub boom on fatal crash',
+        duration: 0.55,
+        render: (ctx) => {
+          const now = 0;
+          const bufferSize = ctx.sampleRate * 0.4;
+          const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+          const data = buffer.getChannelData(0);
+          for (let i = 0; i < bufferSize; i++) {
+            data[i] = Math.random() * 2 - 1;
+          }
+          const noise = ctx.createBufferSource();
+          noise.buffer = buffer;
+          const noiseFilter = ctx.createBiquadFilter();
+          noiseFilter.type = 'lowpass';
+          noiseFilter.frequency.setValueAtTime(1600, now);
+          noiseFilter.frequency.exponentialRampToValueAtTime(80, now + 0.35);
+          const noiseGain = ctx.createGain();
+          noiseGain.gain.setValueAtTime(0.9, now);
+          noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+          noise.connect(noiseFilter);
+          noiseFilter.connect(noiseGain);
+          noiseGain.connect(ctx.destination);
+          noise.start(now);
+          noise.stop(now + 0.36);
+
+          const subOsc = ctx.createOscillator();
+          const subGain = ctx.createGain();
+          subOsc.type = 'sine';
+          subOsc.frequency.setValueAtTime(100, now);
+          subOsc.frequency.exponentialRampToValueAtTime(20, now + 0.45);
+          subGain.gain.setValueAtTime(0.8, now);
+          subGain.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
+          subOsc.connect(subGain);
+          subGain.connect(ctx.destination);
+          subOsc.start(now);
+          subOsc.stop(now + 0.46);
+        }
+      },
+      {
+        id: 'upgrade_purchased',
+        name: 'Shop Upgrade Fanfare',
+        filename: 'disc_run_upgrade_purchased.wav',
+        desc: 'Bright 4-note chime when unlocking/upgrading in the shop',
+        duration: 0.35,
+        render: (ctx) => {
+          const now = 0;
+          const notes = [440.00, 554.37, 659.25, 880.00];
+          notes.forEach((freq, i) => {
+            const startTime = now + i * 0.07;
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(freq, startTime);
+            gain.gain.setValueAtTime(0.3, startTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.2);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(startTime);
+            osc.stop(startTime + 0.22);
+          });
+        }
+      },
+      {
+        id: 'duck_exhaust',
+        name: 'Duck Exhaustion Warning',
+        filename: 'disc_run_duck_exhaustion.wav',
+        desc: 'Warning buzzer when duck stamina runs out',
+        duration: 0.25,
+        render: (ctx) => {
+          const now = 0;
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(180, now);
+          osc.frequency.setValueAtTime(120, now + 0.08);
+          gain.gain.setValueAtTime(0.25, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.19);
+        }
+      },
+      {
+        id: 'synthwave_beat_loop',
+        name: 'Synthwave Drum & Bass Loop (2 Bars)',
+        filename: 'disc_run_synthwave_beat_loop.wav',
+        desc: '2-bar 120 BPM drum & bass synthwave rhythm loop',
+        duration: 4.0,
+        render: (ctx) => {
+          const tempo = 120;
+          const beatDuration = 60 / tempo;
+          const sixteenth = beatDuration / 4;
+          const totalSteps = 32; // 2 bars of 16th notes
+
+          for (let step = 0; step < totalSteps; step++) {
+            const now = step * sixteenth;
+
+            // Kick on 4-on-the-floor (0, 4, 8, 12, 16, 20, 24, 28)
+            if (step % 4 === 0) {
+              const osc = ctx.createOscillator();
+              const gain = ctx.createGain();
+              osc.type = 'sine';
+              osc.frequency.setValueAtTime(110, now);
+              osc.frequency.exponentialRampToValueAtTime(35, now + 0.1);
+              gain.gain.setValueAtTime(0.45, now);
+              gain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
+              osc.connect(gain);
+              gain.connect(ctx.destination);
+              osc.start(now);
+              osc.stop(now + 0.11);
+            }
+
+            // Hi-hat on off-beats (2, 6, 10, 14, 18, 22, 26, 30)
+            if (step % 4 === 2) {
+              const bufferSize = ctx.sampleRate * 0.04;
+              const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+              const data = buffer.getChannelData(0);
+              for (let i = 0; i < bufferSize; i++) {
+                data[i] = Math.random() * 2 - 1;
+              }
+              const noise = ctx.createBufferSource();
+              noise.buffer = buffer;
+              const filter = ctx.createBiquadFilter();
+              filter.type = 'highpass';
+              filter.frequency.setValueAtTime(7000, now);
+              const gain = ctx.createGain();
+              gain.gain.setValueAtTime(0.18, now);
+              gain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
+              noise.connect(filter);
+              filter.connect(gain);
+              gain.connect(ctx.destination);
+              noise.start(now);
+              noise.stop(now + 0.045);
+            }
+
+            // Synth bass on 16th notes
+            if (step % 2 === 0) {
+              const bassNotes = [55, 55, 65.4, 73.4, 55, 55, 82.4, 73.4];
+              const noteFreq = bassNotes[(Math.floor(step / 2)) % bassNotes.length];
+              const bassOsc = ctx.createOscillator();
+              const bassGain = ctx.createGain();
+              const bassFilter = ctx.createBiquadFilter();
+
+              bassOsc.type = 'sawtooth';
+              bassOsc.frequency.setValueAtTime(noteFreq, now);
+              bassFilter.type = 'lowpass';
+              bassFilter.frequency.setValueAtTime(350, now);
+              bassFilter.frequency.exponentialRampToValueAtTime(80, now + 0.09);
+              bassGain.gain.setValueAtTime(0.2, now);
+              bassGain.gain.exponentialRampToValueAtTime(0.001, now + 0.09);
+
+              bassOsc.connect(bassFilter);
+              bassFilter.connect(bassGain);
+              bassGain.connect(ctx.destination);
+              bassOsc.start(now);
+              bassOsc.stop(now + 0.095);
+            }
+          }
+        }
+      }
+    ];
+
+    // --- AudioBuffer to standard WAV file converter (16-bit PCM) ---
+    function audioBufferToWav(buffer) {
+      const numChannels = buffer.numberOfChannels;
+      const sampleRate = buffer.sampleRate;
+      const format = 1; // PCM
+      const bitDepth = 16;
+      
+      const bytesPerSample = bitDepth / 8;
+      const blockAlign = numChannels * bytesPerSample;
+      
+      const length = buffer.length * numChannels * bytesPerSample;
+      const bufferArray = new ArrayBuffer(44 + length);
+      const view = new DataView(bufferArray);
+      
+      // RIFF identifier
+      writeString(view, 0, 'RIFF');
+      // file length minus RIFF identifier & length
+      view.setUint32(4, 36 + length, true);
+      // RIFF type
+      writeString(view, 8, 'WAVE');
+      // format chunk identifier
+      writeString(view, 12, 'fmt ');
+      // format chunk length
+      view.setUint32(16, 16, true);
+      // sample format (raw)
+      view.setUint16(20, format, true);
+      // channel count
+      view.setUint16(22, numChannels, true);
+      // sample rate
+      view.setUint32(24, sampleRate, true);
+      // byte rate (sample rate * block align)
+      view.setUint32(28, sampleRate * blockAlign, true);
+      // block align (channel count * bytes per sample)
+      view.setUint16(32, blockAlign, true);
+      // bits per sample
+      view.setUint16(34, bitDepth, true);
+      // data chunk identifier
+      writeString(view, 36, 'data');
+      // data chunk length
+      view.setUint32(40, length, true);
+      
+      // Write interleaved samples
+      let offset = 44;
+      const channels = [];
+      for (let i = 0; i < numChannels; i++) {
+        channels.push(buffer.getChannelData(i));
+      }
+      
+      for (let i = 0; i < buffer.length; i++) {
+        for (let ch = 0; ch < numChannels; ch++) {
+          let sample = channels[ch][i];
+          // Clamp
+          sample = Math.max(-1, Math.min(1, sample));
+          // Convert to 16-bit signed integer
+          view.setInt16(offset, sample < 0 ? sample * 0x8000 : sample * 0x7FFF, true);
+          offset += 2;
+        }
+      }
+      
+      return new Blob([view], { type: 'audio/wav' });
+    }
+
+    function writeString(view, offset, string) {
+      for (let i = 0; i < string.length; i++) {
+        view.setUint8(offset + i, string.charCodeAt(i));
+      }
+    }
+
+    // --- Render Sound into WAV Blob ---
+    async function renderSoundToWav(soundDef) {
+      const length = Math.ceil(SAMPLE_RATE * soundDef.duration);
+      const offlineCtx = new OfflineAudioContext(1, length, SAMPLE_RATE);
+      soundDef.render(offlineCtx);
+      const renderedBuffer = await offlineCtx.startRendering();
+      return audioBufferToWav(renderedBuffer);
+    }
+
+    // --- Play Sound via Web Audio ---
+    let liveAudioCtx = null;
+    function playSound(soundDef) {
+      if (!liveAudioCtx) {
+        liveAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (liveAudioCtx.state === 'suspended') {
+        liveAudioCtx.resume();
+      }
+      soundDef.render(liveAudioCtx);
+    }
+
+    // --- Download helper ---
+    function triggerDownload(blob, filename) {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
+
+    // --- Populate UI ---
+    const soundList = document.getElementById('sound-list');
+    SOUNDS.forEach((sound) => {
+      const card = document.createElement('div');
+      card.className = 'sound-card';
+      card.innerHTML = `
+        <div class="sound-info">
+          <div class="sound-name">${sound.name}</div>
+          <div class="sound-desc">${sound.desc}</div>
+        </div>
+        <div class="sound-controls">
+          <button class="icon-btn play-btn" title="Play Sound">▶ PLAY</button>
+          <button class="icon-btn download-btn" title="Download WAV">⬇ WAV</button>
+        </div>
+      `;
+
+      const playBtn = card.querySelector('.play-btn');
+      playBtn.addEventListener('click', () => playSound(sound));
+
+      const downloadBtn = card.querySelector('.download-btn');
+      downloadBtn.addEventListener('click', async () => {
+        downloadBtn.textContent = '⏳ ...';
+        const wavBlob = await renderSoundToWav(sound);
+        triggerDownload(wavBlob, sound.filename);
+        downloadBtn.textContent = '⬇ WAV';
+      });
+
+      soundList.appendChild(card);
+    });
+
+    // --- Download All Handler ---
+    const downloadAllBtn = document.getElementById('download-all-btn');
+    downloadAllBtn.addEventListener('click', async () => {
+      downloadAllBtn.textContent = '⏳ RENDERING ALL SOUNDS...';
+      for (let i = 0; i < SOUNDS.length; i++) {
+        const sound = SOUNDS[i];
+        const wavBlob = await renderSoundToWav(sound);
+        triggerDownload(wavBlob, sound.filename);
+        // Small pause between file downloads so the browser doesn't block them
+        await new Promise((r) => setTimeout(r, 220));
+      }
+      downloadAllBtn.textContent = '✅ ALL DOWNLOADS STARTED!';
+      setTimeout(() => {
+        downloadAllBtn.textContent = '📦 DOWNLOAD ALL SOUNDS (.WAV)';
+      }, 3000);
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Disc Run - Store & Gameplay Assets Showcase</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Rajdhani:wght@600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #060714;
+      --card-bg: rgba(13, 17, 34, 0.85);
+      --cyan: #00f0ff;
+      --gold: #ffcc00;
+      --pink: #ff0055;
+      --text: #ffffff;
+      --text-muted: #94a3b8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Rajdhani', sans-serif;
+      padding: 30px 20px 60px 20px;
+    }
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+    header {
+      text-align: center;
+      margin-bottom: 40px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid rgba(0, 240, 255, 0.2);
+    }
+    h1 {
+      font-family: 'Orbitron', monospace;
+      font-size: 36px;
+      font-weight: 900;
+      letter-spacing: 3px;
+      color: var(--cyan);
+      text-shadow: 0 0 20px rgba(0, 240, 255, 0.6);
+      margin-bottom: 8px;
+    }
+    .subtitle {
+      font-size: 16px;
+      color: var(--text-muted);
+      letter-spacing: 1px;
+    }
+    .section-title {
+      font-family: 'Orbitron', monospace;
+      font-size: 22px;
+      font-weight: 900;
+      color: var(--gold);
+      letter-spacing: 2px;
+      margin: 40px 0 20px 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+      gap: 24px;
+    }
+    .asset-card {
+      background: var(--card-bg);
+      border: 1px solid rgba(0, 240, 255, 0.25);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
+      transition: all 0.25s ease;
+    }
+    .asset-card:hover {
+      border-color: var(--cyan);
+      box-shadow: 0 0 25px rgba(0, 240, 255, 0.4);
+      transform: translateY(-3px);
+    }
+    .asset-img-wrap {
+      width: 100%;
+      height: 220px;
+      background: #02030a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .asset-img-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.3s ease;
+    }
+    .asset-card:hover .asset-img-wrap img {
+      transform: scale(1.03);
+    }
+    .asset-info {
+      padding: 16px 20px;
+    }
+    .asset-title {
+      font-family: 'Orbitron', monospace;
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--cyan);
+      margin-bottom: 6px;
+    }
+    .asset-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+    /* Video Reel Section */
+    .video-preview-box {
+      background: rgba(10, 14, 30, 0.9);
+      border: 1.5px solid var(--pink);
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 0 35px rgba(255, 0, 85, 0.3);
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    .video-frame {
+      width: 100%;
+      max-width: 960px;
+      height: 540px;
+      border-radius: 12px;
+      border: 2px solid rgba(0, 240, 255, 0.4);
+      margin: 16px auto;
+      display: block;
+      background: #000;
+    }
+    .play-btn-row {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin-top: 12px;
+    }
+    .glow-btn {
+      background: linear-gradient(135deg, #00f0ff, #0088ff);
+      border: none;
+      color: #030712;
+      font-family: 'Orbitron', monospace;
+      font-size: 14px;
+      font-weight: 900;
+      padding: 10px 24px;
+      border-radius: 24px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 0 20px rgba(0, 240, 255, 0.5);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>DISC RUN • STORE & PROMO ASSETS</h1>
+      <p class="subtitle">Complete Suite of Authentic Menu Screens, App Store Promo Cards & Gameplay Video</p>
+    </header>
+
+    <!-- LIVE GAMEPLAY VIDEO DEMO -->
+    <div class="section-title">🎬 60 FPS LIVE GAMEPLAY VIDEO REEL</div>
+    <div class="video-preview-box">
+      <p class="asset-desc">Live continuous gameplay recording showing ducking, obstacle dodging, and 10X orbit multipliers.</p>
+      <iframe class="video-frame" src="index.html?screen=gameplay_video"></iframe>
+      <div class="play-btn-row">
+        <a href="scripts/record_gameplay.html" target="_blank" class="glow-btn">🎥 Launch Fullscreen High-FPS Video Recorder</a>
+        <a href="index.html" target="_blank" class="glow-btn" style="background: linear-gradient(135deg, #ff0055, #ff5500); color:#fff; box-shadow: 0 0 20px rgba(255,0,85,0.5);">🎮 Play Game Live</a>
+      </div>
+    </div>
+
+    <!-- AUTHENTIC PROMO SCREENSHOTS (NO HEARTS, NO DIAMONDS, REAL HUD) -->
+    <div class="section-title">🌟 APP STORE & GOOGLE PLAY PROMO SCREENSHOTS</div>
+    <div class="grid">
+      <div class="asset-card">
+        <div class="asset-img-wrap"><img src="promo_screenshots/1_promo_survive_turntable.png" alt="Survive Turntable"></div>
+        <div class="asset-info">
+          <div class="asset-title">1. SURVIVE THE ROTATING TURNTABLE</div>
+          <div class="asset-desc">Hold spacebar/touch to duck under overhead bars and build massive Perfect Duck combos.</div>
+        </div>
+      </div>
+
+      <div class="asset-card">
+        <div class="asset-img-wrap"><img src="promo_screenshots/2_promo_solar_fireballs.png" alt="Solar Fireballs"></div>
+        <div class="asset-info">
+          <div class="asset-title">2. DODGE ORBITING FIREBALLS</div>
+          <div class="asset-desc">Stage 2 Solar Flare hazards, molten tracks, and rapid radial steer maneuvers.</div>
+        </div>
+      </div>
+
+      <div class="asset-card">
+        <div class="asset-img-wrap"><img src="promo_screenshots/3_promo_shields_deflectors.png" alt="Crash Shields"></div>
+        <div class="asset-info">
+          <div class="asset-title">3. DEPLOY CRASH SHIELDS & DEFLECTORS</div>
+          <div class="asset-desc">Absorb fatal collisions and deflect acid slime pools with permanent workshop defenses.</div>
+        </div>
+      </div>
+
+      <div class="asset-card">
+        <div class="asset-img-wrap"><img src="promo_screenshots/4_promo_quantum_portals.png" alt="Void Portals"></div>
+        <div class="asset-info">
+          <div class="asset-title">4. WARP THROUGH QUANTUM PORTALS</div>
+          <div class="asset-desc">Instant teleporters across expanding glowing tracks in Void Horizon.</div>
+        </div>
+      </div>
+
+      <div class="asset-card">
+        <div class="asset-img-wrap"><img src="promo_screenshots/5_promo_orbit_multipliers.png" alt="Orbit Multipliers"></div>
+        <div class="asset-info">
+          <div class="asset-title">5. CHARGE 10X ORBIT SURGES</div>
+          <div class="asset-desc">Every 10 revolutions charges the vertical meter for explosive global score bonuses!</div>
+        </div>
+      </div>
+
+      <div class="asset-card">
+        <div class="asset-img-wrap"><img src="promo_screenshots/6_promo_expanding_worlds.png" alt="Expanding Worlds"></div>
+        <div class="asset-info">
+          <div class="asset-title">6. MASTER 8 EXPANDING WORLDS</div>
+          <div class="asset-desc">From 4 to 11 high-speed lanes with dynamic collapsing abyss tracks.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AUTHENTIC MENU SCREENSHOTS (NO AD PLACEHOLDER) -->
+    <div class="section-title">📱 CLEAN MENU & WORKSHOP SCREENSHOTS (NO ADS)</div>
+    <div class="grid">
+      <div class="asset-card">
+        <div class="asset-img-wrap"><img src="actual_screenshots/1_main_menu_and_workshop.png" alt="Main Menu & Workshop"></div>
+        <div class="asset-info">
+          <div class="asset-title">MAIN MENU & UPGRADE WORKSHOP</div>
+          <div class="asset-desc">Clean main menu showing 8 stage selection cards and permanent upgrade shop.</div>
+        </div>
+      </div>
+
+      <div class="asset-card">
+        <div class="asset-img-wrap"><img src="actual_screenshots/2_achievements_modal.png" alt="Achievements Modal"></div>
+        <div class="asset-info">
+          <div class="asset-title">20 RUNNER ACHIEVEMENTS</div>
+          <div class="asset-desc">Trophy progress modal featuring all 20 calibrated runner achievements and rewards.</div>
+        </div>
+      </div>
+
+      <div class="asset-card">
+        <div class="asset-img-wrap"><img src="actual_screenshots/3_postrun_second_chance.png" alt="Post Run Decisions"></div>
+        <div class="asset-info">
+          <div class="asset-title">POST-RUN SECOND CHANCE</div>
+          <div class="asset-desc">Revive, 2X multiplier calculation, and clean skip options.</div>
+        </div>
+      </div>
+
+      <div class="asset-card">
+        <div class="asset-img-wrap"><img src="actual_screenshots/4_lifetime_stats.png" alt="Career Stats"></div>
+        <div class="asset-info">
+          <div class="asset-title">LIFETIME CAREER STATS</div>
+          <div class="asset-desc">Comprehensive runner telemetry, total rotations, perfect ducks, and high scores.</div>
+        </div>
+      </div>
+
+      <div class="asset-card">
+        <div class="asset-img-wrap"><img src="actual_screenshots/5_pause_menu.png" alt="Pause Menu"></div>
+        <div class="asset-info">
+          <div class="asset-title">IN-GAME PAUSE MODAL</div>
+          <div class="asset-desc">Real-time run overview, score checkpoints, and resume controls.</div>
+        </div>
+      </div>
+
+      <div class="asset-card">
+        <div class="asset-img-wrap"><img src="actual_screenshots/6_stage_unlocked_modal.png" alt="Stage Unlock Modal"></div>
+        <div class="asset-info">
+          <div class="asset-title">STAGE UNLOCKED CELEBRATION</div>
+          <div class="asset-desc">Celebratory milestone popup when unlocking new stages.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>
