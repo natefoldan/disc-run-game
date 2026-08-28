@@ -2726,26 +2726,22 @@
         });
       }
 
-      // UI Buttons (Instant touch & click support for mobile browsers)
+      // UI Buttons
       if (this.startBtn) {
-        const handleStartPress = (e) => {
-          if (e) e.stopPropagation();
+        this.startBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
           if (window.soundEngine) window.soundEngine.init();
           this.startGame();
-        };
-        this.startBtn.addEventListener('click', handleStartPress);
-        this.startBtn.addEventListener('touchstart', handleStartPress, { passive: true });
+        });
       }
 
       if (this.restartBtn) {
-        const handleRestartPress = (e) => {
+        this.restartBtn.addEventListener('click', (e) => {
           if (!this.canRestart) return;
-          if (e) e.stopPropagation();
+          e.stopPropagation();
           if (window.soundEngine) window.soundEngine.init();
           this.restartGame();
-        };
-        this.restartBtn.addEventListener('click', handleRestartPress);
-        this.restartBtn.addEventListener('touchstart', handleRestartPress, { passive: true });
+        });
       }
 
       // Post-Run Second Chance / Ad Option Modal Buttons
@@ -2787,19 +2783,8 @@
       this.centerDuckTouchId = null;
 
       const handleTouchStart = (e) => {
-        if (this.isPaused) return;
+        if (this.isPaused || this.state !== STATE.PLAYING) return;
         if (window.soundEngine) window.soundEngine.init();
-
-        if (this.state === STATE.START) {
-          this.startGame();
-          return;
-        }
-        if (this.state === STATE.GAME_OVER) {
-          if (this.canRestart) this.restartGame();
-          return;
-        }
-
-        if (this.state !== STATE.PLAYING) return;
 
         for (let i = 0; i < e.changedTouches.length; i++) {
           const touch = e.changedTouches[i];
