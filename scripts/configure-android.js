@@ -36,9 +36,12 @@ if (fs.existsSync(gradlePath)) {
         checkReleaseBuilds false
     }
 `;
+  // First, update buildTypes release block to attach signingConfig
+  gradle = gradle.replace(/buildTypes\s*\{\s*release\s*\{/, 'buildTypes {\n        release {\n            signingConfig signingConfigs.release');
+
+  // Second, insert signingConfigs and lintOptions before buildTypes
   if (!gradle.includes('signingConfigs {')) {
     gradle = gradle.replace('buildTypes {', signingBlock + '\n    buildTypes {');
-    gradle = gradle.replace(/release\s*\{/, 'release {\n            signingConfig signingConfigs.release');
   }
 
   fs.writeFileSync(gradlePath, gradle, 'utf8');
