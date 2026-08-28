@@ -79,14 +79,30 @@ jobs:
       - name: Sign Android Release Bundle (If Keystore Available)
         if: ${{ hashFiles('signing.keystore') != '' }}
         run: |
-          KEY_PASS="${{ secrets.KEYSTORE_PASSWORD || 'discrun2026' }}"
-          echo "Signing AAB with repository signing.keystore..."
+          KEY_PASS="${{ secrets.KEYSTORE_PASSWORD }}"
+          KEY_ALIAS="${{ secrets.KEY_ALIAS }}"
+
+          if [ -f "signing-key-info.txt" ]; then
+            echo "Reading credentials from signing-key-info.txt..."
+            KEY_PASS=$(grep -i -E 'password|storepass|keypass' signing-key-info.txt | head -n 1 | awk -F': ' '{print $2}' | tr -d '\r\n')
+            KEY_ALIAS=$(grep -i 'alias' signing-key-info.txt | head -n 1 | awk -F': ' '{print $2}' | tr -d '\r\n')
+          fi
+
+          if [ -z "$KEY_PASS" ]; then
+            KEY_PASS="pwa-builder"
+          fi
+
+          if [ -z "$KEY_ALIAS" ]; then
+            KEY_ALIAS=$(keytool -list -v -keystore signing.keystore -storepass "$KEY_PASS" 2>/dev/null | grep "Alias name:" | awk '{print $3}' | head -n 1)
+          fi
+
+          echo "Signing with Alias: $KEY_ALIAS"
           jarsigner -verbose -sigalg SHA256withRSA -digestalg SHA-256 \
             -keystore signing.keystore \
             -storepass "$KEY_PASS" \
             -keypass "$KEY_PASS" \
             android/app/build/outputs/bundle/release/app-release.aab \
-            "${{ secrets.KEY_ALIAS || 'discrun' }}" || true
+            "$KEY_ALIAS" || true
 
       - name: Upload Android App Bundle (AAB) Artifact
         uses: actions/upload-artifact@v4
