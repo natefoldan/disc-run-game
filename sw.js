@@ -1,5 +1,5 @@
-// Disc Run 3D - Service Worker for PWA Offline & Install Support
-const CACHE_NAME = 'disc-run-v2';
+// Disc Run 3D - Service Worker for PWA Offline & Install Support (Live Updates & Offline Capable)
+const CACHE_NAME = 'disc-run-v3';
 const ASSETS = [
   './',
   './index.html',
@@ -13,10 +13,11 @@ const ASSETS = [
 ];
 
 self.addEventListener('install', (e) => {
+  self.skipWaiting();
   e.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       return cache.addAll(ASSETS);
-    }).then(() => self.skipWaiting())
+    })
   );
 });
 
@@ -32,10 +33,23 @@ self.addEventListener('activate', (e) => {
   );
 });
 
+// Network First strategy: Always fetch freshest version when online, fallback to cache when offline
 self.addEventListener('fetch', (e) => {
+  if (e.request.method !== 'GET') return;
+
   e.respondWith(
-    caches.match(e.request).then((res) => {
-      return res || fetch(e.request);
-    }).catch(() => caches.match('./index.html'))
+    fetch(e.request)
+      .then((networkRes) => {
+        if (networkRes && networkRes.status === 200) {
+          const resClone = networkRes.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(e.request, resClone));
+        }
+        return networkRes;
+      })
+      .catch(() => {
+        return caches.match(e.request).then((cachedRes) => {
+          return cachedRes || caches.match('./index.html');
+        });
+      })
   );
 });
