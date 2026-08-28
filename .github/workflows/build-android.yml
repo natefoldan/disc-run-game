@@ -1,0 +1,103 @@
+name: Build Native Android App Bundle (AAB & APK)
+
+on:
+  workflow_dispatch:
+    inputs:
+      version_code:
+        description: 'Android Version Code'
+        required: true
+        default: '4'
+      version_name:
+        description: 'Android Version Name'
+        required: true
+        default: '1.0.4'
+  push:
+    branches:
+      - main
+
+jobs:
+  build-android:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Set up Java 17 (Temurin)
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Prepare Web Distribution Folder (www)
+        run: |
+          mkdir -p www
+          cp index.html style.css game.js audio.js manifest.json www/
+          cp -r icon-*.png www/ 2>/dev/null || true
+
+      - name: Install NPM Dependencies
+        run: npm install
+
+      - name: Initialize Capacitor Android Platform
+        run: |
+          npx cap add android || true
+          npx cap sync android
+
+      - name: Configure Android Package ID & Immersive Fullscreen
+        run: |
+          V_CODE="${{ github.event.inputs.version_code || '4' }}"
+          V_NAME="${{ github.event.inputs.version_name || '1.0.4' }}"
+          echo "Setting Version Code: $V_CODE, Version Name: $V_NAME"
+          
+          sed -i "s/versionCode 1/versionCode $V_CODE/g" android/app/build.gradle
+          sed -i "s/versionName \"1.0\"/versionName \"$V_NAME\"/g" android/app/build.gradle
+          sed -i "s/applicationId \"com.discrun.game\"/applicationId \"com.coniferstudios.discrun\"/g" android/app/build.gradle
+          
+          # Enforce Fullscreen Portrait in AndroidManifest.xml
+          sed -i 's/<activity/<activity android:screenOrientation="portrait" android:theme="@android:style\/Theme.NoTitleBar.Fullscreen"/g' android/app/src/main/AndroidManifest.xml
+
+      - name: Copy App Launcher Icons to Android Project
+        run: |
+          mkdir -p android/app/src/main/res/mipmap-xxxhdpi
+          cp icon-512.png android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png 2>/dev/null || true
+          cp icon-512.png android/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png 2>/dev/null || true
+
+      - name: Build Android App Bundle (AAB) & Release APK
+        working-directory: android
+        run: |
+          chmod +x gradlew
+          ./gradlew bundleRelease assembleRelease --stacktrace
+
+      - name: Sign Android Release Bundle (If Keystore Available)
+        if: ${{ hashFiles('signing.keystore') != '' }}
+        run: |
+          KEY_PASS="${{ secrets.KEYSTORE_PASSWORD || 'discrun2026' }}"
+          echo "Signing AAB with repository signing.keystore..."
+          jarsigner -verbose -sigalg SHA256withRSA -digestalg SHA-256 \
+            -keystore signing.keystore \
+            -storepass "$KEY_PASS" \
+            -keypass "$KEY_PASS" \
+            android/app/build/outputs/bundle/release/app-release.aab \
+            "${{ secrets.KEY_ALIAS || 'discrun' }}" || true
+
+      - name: Upload Android App Bundle (AAB) Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Disc-Run-Android-App-Bundle-AAB
+          path: android/app/build/outputs/bundle/release/*.aab
+          retention-days: 14
+
+      - name: Upload Release APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Disc-Run-Android-APK
+          path: android/app/build/outputs/apk/release/*.apk
+          retention-days: 14

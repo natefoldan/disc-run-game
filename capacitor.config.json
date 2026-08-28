@@ -1,14 +1,15 @@
 {
-  "appId": "com.discrun.game",
+  "appId": "com.coniferstudios.discrun",
   "appName": "Disc Run",
-  "webDir": ".",
+  "webDir": "www",
   "bundledWebRuntime": false,
+  "backgroundColor": "#060714",
   "server": {
     "androidScheme": "https"
   },
   "android": {
     "allowMixedContent": true,
     "captureInput": true,
-    "webContentsDebuggingEnabled": true
+    "webContentsDebuggingEnabled": false
   }
 }
