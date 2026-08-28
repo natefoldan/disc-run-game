@@ -1399,6 +1399,7 @@
 
     pauseGame() {
       if (this.state !== STATE.PLAYING) return;
+      this.setDucking(false);
       this.isPaused = true;
       if (this.pauseScreen) this.pauseScreen.classList.remove('hidden');
       if (this.touchZonesContainer) this.touchZonesContainer.classList.add('hidden');
@@ -1765,6 +1766,7 @@
       if (this.unlockedStageDesc) this.unlockedStageDesc.textContent = `${stage.lanes.length} Lanes • Hazard: ${stage.hazardName}`;
       if (this.stageUnlockedModal) this.stageUnlockedModal.classList.remove('hidden');
 
+      this.setDucking(false);
       if (this.state === STATE.PLAYING) {
         this.isPaused = true;
         if (window.soundEngine) window.soundEngine.stopBgm();
@@ -3147,6 +3149,7 @@
 
     triggerGameOver(reason) {
       if (this.state === STATE.GAME_OVER) return;
+      this.setDucking(false);
       this.state = STATE.GAME_OVER;
       this.isPaused = false;
       this.canRestart = false;
@@ -3265,51 +3268,53 @@
     }
 
     setDucking(isDuck) {
-      if (this.isPaused) return;
-
-      if (isDuck) {
-        if (this.isDuckExhausted || this.currentDuckTime <= 0.02) {
-          if (!this.isDucking && this.state === STATE.PLAYING && window.soundEngine) {
-            window.soundEngine.playExhaustSound();
-          }
-          return;
-        }
-      }
-
-      if (this.isDucking === isDuck) return;
-      this.isDucking = isDuck;
-
-      if (isDuck) {
-        // Tag approaching bars with the exact position when duck key was pressed
-        if (this.state === STATE.PLAYING) {
-          for (let i = 0; i < this.obstacles.length; i++) {
-            const obs = this.obstacles[i];
-            if (obs.type === 'BAR' && !obs.passed) {
-              obs.mesh.getWorldPosition(_tempWorldPos);
-              const worldX = _tempWorldPos.x;
-              const worldZ = _tempWorldPos.z;
-              if (worldZ > 2.8 && worldX >= -1.0 && worldX <= 4.8) {
-                obs.duckInitiatedAtX = worldX;
-              }
-            }
-          }
-        }
-
-        this.targetDuckScaleY = DUCKING_HEIGHT / STANDING_HEIGHT;
-        this.squashScaleX = 1.35;
-        this.squashScaleZ = 1.35;
-        if (this.duckIndicator) this.duckIndicator.classList.remove('hidden');
-        if (this.state === STATE.PLAYING && window.soundEngine) {
-          window.soundEngine.playDuckSound();
-        }
-      } else {
+      if (!isDuck) {
+        this.isDucking = false;
         this.targetDuckScaleY = 1.0;
         this.squashScaleX = 1.0;
         this.squashScaleZ = 1.0;
+        this.duckScaleY = 1.0;
+        if (this.playerMesh) this.playerMesh.scale.set(1.0, 1.0, 1.0);
         if (this.duckIndicator) this.duckIndicator.classList.add('hidden');
-        if (this.state === STATE.PLAYING && window.soundEngine) {
+        if (this.state === STATE.PLAYING && window.soundEngine && !this.isPaused) {
           window.soundEngine.playUnduckSound();
         }
+        return;
+      }
+
+      if (this.isPaused || this.state !== STATE.PLAYING) return;
+
+      if (this.isDuckExhausted || this.currentDuckTime <= 0.02) {
+        if (!this.isDucking && this.state === STATE.PLAYING && window.soundEngine) {
+          window.soundEngine.playExhaustSound();
+        }
+        return;
+      }
+
+      if (this.isDucking) return;
+      this.isDucking = true;
+
+      // Tag approaching bars with the exact position when duck key was pressed
+      if (this.state === STATE.PLAYING) {
+        for (let i = 0; i < this.obstacles.length; i++) {
+          const obs = this.obstacles[i];
+          if (obs.type === 'BAR' && !obs.passed) {
+            obs.mesh.getWorldPosition(_tempWorldPos);
+            const worldX = _tempWorldPos.x;
+            const worldZ = _tempWorldPos.z;
+            if (worldZ > 2.8 && worldX >= -1.0 && worldX <= 5.0) {
+              obs.duckInitiatedAtX = worldX;
+            }
+          }
+        }
+      }
+
+      this.targetDuckScaleY = DUCKING_HEIGHT / STANDING_HEIGHT;
+      this.squashScaleX = 1.35;
+      this.squashScaleZ = 1.35;
+      if (this.duckIndicator) this.duckIndicator.classList.remove('hidden');
+      if (this.state === STATE.PLAYING && window.soundEngine) {
+        window.soundEngine.playDuckSound();
       }
     }
 
