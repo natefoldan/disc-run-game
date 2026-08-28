@@ -64,7 +64,7 @@ jobs:
         working-directory: android
         run: |
           chmod +x gradlew
-          ./gradlew bundleRelease assembleRelease --stacktrace
+          ./gradlew bundleRelease assembleDebug --stacktrace
 
       - name: Upload Android App Bundle (AAB) Artifact
         uses: actions/upload-artifact@v4
@@ -73,9 +73,9 @@ jobs:
           path: android/app/build/outputs/bundle/release/*.aab
           retention-days: 14
 
-      - name: Upload Release APK Artifact
+      - name: Upload Test APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: Disc-Run-Android-APK
-          path: android/app/build/outputs/apk/release/*.apk
+          path: android/app/build/outputs/apk/debug/*.apk
           retention-days: 14

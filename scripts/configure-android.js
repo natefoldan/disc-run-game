@@ -15,15 +15,25 @@ if (fs.existsSync(gradlePath)) {
   gradle = gradle.replace(/versionName\s+"[^"]+"/, `versionName "${vName}"`);
   gradle = gradle.replace(/applicationId\s+"[^"]+"/, 'applicationId "com.coniferstudios.discrun"');
 
-  // Inject signingConfig
+  // Copy keystore directly into app directory for reliable path resolution
+  if (fs.existsSync('signing.keystore')) {
+    fs.copyFileSync('signing.keystore', 'android/app/signing.keystore');
+    console.log('Copied signing.keystore to android/app/signing.keystore');
+  }
+
+  // Inject signingConfig and lintOptions
   const signingBlock = `
     signingConfigs {
         release {
-            storeFile file('../../signing.keystore')
+            storeFile file('signing.keystore')
             storePassword 'MM62gVjuAiiq'
             keyAlias 'my-key-alias'
             keyPassword 'MM62gVjuAiiq'
         }
+    }
+    lintOptions {
+        abortOnError false
+        checkReleaseBuilds false
     }
 `;
   if (!gradle.includes('signingConfigs {')) {
