@@ -1,12 +1,15 @@
 // Disc Run 3D - Service Worker for PWA Offline & Install Support
-const CACHE_NAME = 'disc-run-v1';
+const CACHE_NAME = 'disc-run-v2';
 const ASSETS = [
   './',
   './index.html',
   './game.js',
   './audio.js',
   './style.css',
-  './manifest.json'
+  './manifest.json',
+  './icon-192.png',
+  './icon-512.png',
+  './icon-512-maskable.png'
 ];
 
 self.addEventListener('install', (e) => {
