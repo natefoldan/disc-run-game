@@ -4,6 +4,7 @@
   "description": "Disc Run - 3D Turntable Runner Game for Android and Web",
   "main": "index.html",
   "scripts": {
+    "release": "node scripts/release.js",
     "cap:add:android": "npx cap add android",
     "cap:sync": "npx cap sync",
     "cap:open:android": "npx cap open android",

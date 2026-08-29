@@ -1,4 +1,4 @@
-name: Build Pure Native Android App Bundle (AAB & APK)
+﻿name: Build Pure Native Android App Bundle (AAB & APK)
 
 on:
   workflow_dispatch:
@@ -6,11 +6,11 @@ on:
       version_code:
         description: 'Android Version Code'
         required: true
-        default: '17'
+        default: '18'
       version_name:
         description: 'Android Version Name'
         required: true
-        default: '1.0.17'
+        default: '1.0.18'
   push:
     branches:
       - main
@@ -79,11 +79,24 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: github.ref == 'refs/heads/main'
         with:
-          tag_name: "v1.0.17"
-          name: "Disc Run Pure Native Android Release (v1.0.17)"
+          tag_name: "v1.0.18"
+          name: "Disc Run Pure Native Android Release (v1.0.18)"
           body: "Pure Native Android Studio Shell for Disc Run. 100% Offline, Hardware-Accelerated WebGL, Zero URL bar, Signed with release keystore."
           files: |
             disc-run.apk
             disc-run.aab
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Deploy Signed Bundle Directly to Google Play Internal Test Track
+        uses: r0adkll/upload-google-play@v1
+        if: github.ref == 'refs/heads/main' && env.PLAY_CONFIG_JSON != ''
+        env:
+          PLAY_CONFIG_JSON: ${{ secrets.PLAY_CONFIG_JSON }}
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.PLAY_CONFIG_JSON }}
+          packageName: com.coniferstudios.discrun
+          releaseFiles: disc-run.aab
+          track: internal
+          status: completed
+
