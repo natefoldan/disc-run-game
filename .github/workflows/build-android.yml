@@ -59,13 +59,7 @@ jobs:
         run: |
           mkdir -p app
           cp ../signing.keystore app/signing.keystore 2>/dev/null || true
-          gradle wrapper --gradle-version 8.4 || true
-          if [ -f "gradlew" ]; then
-            chmod +x gradlew
-            ./gradlew bundleRelease assembleDebug --stacktrace
-          else
-            gradle bundleRelease assembleDebug --stacktrace
-          fi
+          gradle bundleRelease assembleDebug --stacktrace
           cp app/build/outputs/bundle/release/*.aab ../disc-run.aab
           cp app/build/outputs/apk/debug/*.apk ../disc-run.apk 2>/dev/null || true
 
