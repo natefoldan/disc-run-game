@@ -6,11 +6,11 @@ on:
       version_code:
         description: 'Android Version Code'
         required: true
-        default: '14'
+        default: '15'
       version_name:
         description: 'Android Version Name'
         required: true
-        default: '1.0.14'
+        default: '1.0.15'
   push:
     branches:
       - main
@@ -52,7 +52,6 @@ jobs:
       - name: Build Signed Android App Bundle (AAB) & Debug APK
         working-directory: android
         run: |
-          # If gradlew doesn't exist or isn't executable, generate via gradle wrapper
           if [ ! -f "gradlew" ]; then
             gradle wrapper --gradle-version 8.4
           fi
@@ -79,8 +78,8 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: github.ref == 'refs/heads/main'
         with:
-          tag_name: "v1.0.14"
-          name: "Disc Run Pure Native Android Release (v1.0.14)"
+          tag_name: "v1.0.15"
+          name: "Disc Run Pure Native Android Release (v1.0.15)"
           body: "Pure Native Android Studio Shell for Disc Run. 100% Offline, Hardware-Accelerated WebGL, Zero URL bar, Signed with release keystore."
           files: |
             disc-run.apk
