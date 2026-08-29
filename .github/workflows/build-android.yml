@@ -61,7 +61,12 @@ jobs:
         run: |
           mkdir -p app
           cp ../signing.keystore app/signing.keystore 2>/dev/null || true
-          gradle bundleRelease assembleDebug --stacktrace
+          gradle bundleRelease assembleDebug --stacktrace 2>&1 | tee ../gradle_build.log
+          if [ ${PIPESTATUS[0]} -ne 0 ]; then
+            echo "=== GRADLE BUILD FAILED ==="
+            tail -n 80 ../gradle_build.log
+            exit 1
+          fi
           cp app/build/outputs/bundle/release/*.aab ../disc-run.aab
           cp app/build/outputs/apk/debug/*.apk ../disc-run.apk 2>/dev/null || true
 
