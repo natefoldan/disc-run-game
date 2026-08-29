@@ -505,6 +505,7 @@
   // Calibrated Upgrade Progression Tables (5 Upgrades - Premium Economy)
   const BASE_DUCK_DURATION = 0.50;
   const DUCK_INCREMENT = 0.05;
+  const MAX_DUCK_LEVEL = 10;
   const DUCK_COSTS = [1200, 3000, 7500, 15000, 28000, 48000, 75000, 115000, 175000];
 
   const MAX_SHIELD_LEVEL = 3;
