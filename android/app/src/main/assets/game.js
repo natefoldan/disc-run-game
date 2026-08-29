@@ -72,13 +72,13 @@
       progress: (game) => `${Math.min(25, game.totalPerfectDucks)}/25 Ducks`
     },
     {
-      id: 'perfect_duck_100',
+      id: 'perfect_duck_50',
       icon: '🧘',
       title: 'ZEN MASTER',
-      desc: 'Execute 100 total Perfect Ducks with pinpoint timing',
+      desc: 'Execute 50 total Perfect Ducks with pinpoint timing',
       reward: 5000,
-      check: (game) => game.totalPerfectDucks >= 100,
-      progress: (game) => `${Math.min(100, game.totalPerfectDucks)}/100 Ducks`
+      check: (game) => game.totalPerfectDucks >= 50,
+      progress: (game) => `${Math.min(50, game.totalPerfectDucks)}/50 Ducks`
     },
     {
       id: 'streak_3',
@@ -90,13 +90,13 @@
       progress: (game) => `${Math.min(3, game.bestPerfectDuckStreak)}/3 Streak`
     },
     {
-      id: 'orbit_mult_4',
+      id: 'orbit_mult_5',
       icon: '🚀',
       title: 'ORBIT SURGE MASTER',
-      desc: 'Reach a 4X Orbit Multiplier in a single run (30+ Revs)',
-      reward: 4000,
-      check: (game) => game.bestRotations >= 30.0,
-      progress: (game) => `${Math.min(4, Math.floor(game.bestRotations / 10) + 1)}X/4X Mult`
+      desc: 'Reach a 5X Orbit Multiplier in a single run (40+ Revs)',
+      reward: 5000,
+      check: (game) => game.bestRotations >= 40.0,
+      progress: (game) => `${Math.min(5, Math.floor(game.bestRotations / 10) + 1)}X/5X Mult`
     },
     {
       id: 'upgrades_5',
@@ -104,35 +104,35 @@
       title: 'TUNED & READY',
       desc: 'Purchase 5 workshop upgrades across any category',
       reward: 2000,
-      check: (game) => ((game.duckLevel - 1) + game.shieldLevel + game.deflectorLevel + game.boosterLevel + game.magnetLevel) >= 5,
-      progress: (game) => `${Math.min(5, (game.duckLevel - 1) + game.shieldLevel + game.deflectorLevel + game.boosterLevel + game.magnetLevel)}/5 Upgrades`
+      check: (game) => ((game.duckLevel - 1) + game.revBonusLevel + game.shieldLevel + game.deflectorLevel + game.boosterLevel + game.magnetLevel) >= 5,
+      progress: (game) => `${Math.min(5, (game.duckLevel - 1) + game.revBonusLevel + game.shieldLevel + game.deflectorLevel + game.boosterLevel + game.magnetLevel)}/5 Upgrades`
     },
     {
       id: 'all_upgrades',
       icon: '👑',
       title: 'FULL ARSENAL',
-      desc: 'Purchase all workshop upgrades to max out all 5 categories',
+      desc: 'Purchase all workshop upgrades to max out all 6 categories',
       reward: 25000,
-      check: (game) => (game.duckLevel >= 10 && game.shieldLevel >= 3 && game.deflectorLevel >= 3 && game.boosterLevel >= 3 && game.magnetLevel >= 3),
-      progress: (game) => `${(game.duckLevel - 1) + game.shieldLevel + game.deflectorLevel + game.boosterLevel + game.magnetLevel}/22 Upgrades`
+      check: (game) => (game.duckLevel >= 10 && game.revBonusLevel >= 5 && game.shieldLevel >= 3 && game.deflectorLevel >= 3 && game.boosterLevel >= 3 && game.magnetLevel >= 3),
+      progress: (game) => `${(game.duckLevel - 1) + game.revBonusLevel + game.shieldLevel + game.deflectorLevel + game.boosterLevel + game.magnetLevel}/26 Upgrades`
     },
     {
-      id: 'gems_100',
+      id: 'gems_300',
       icon: '💎',
       title: 'CRYSTAL COLLECTOR',
-      desc: 'Collect 100 total score gems across your career',
-      reward: 2500,
-      check: (game) => game.totalGems >= 100,
-      progress: (game) => `${Math.min(100, game.totalGems)}/100 Gems`
+      desc: 'Collect 300 total score gems across your career',
+      reward: 5000,
+      check: (game) => game.totalGems >= 300,
+      progress: (game) => `${Math.min(300, game.totalGems)}/300 Gems`
     },
     {
-      id: 'powerups_100',
+      id: 'powerups_500',
       icon: '🔋',
       title: 'SUPERCHARGED',
-      desc: 'Collect 100 Multiplier and Invincibility powerups',
-      reward: 5000,
-      check: (game) => game.totalPowerups >= 100,
-      progress: (game) => `${Math.min(100, game.totalPowerups)}/100 Powerups`
+      desc: 'Collect 500 Multiplier and Invincibility powerups',
+      reward: 7500,
+      check: (game) => game.totalPowerups >= 500,
+      progress: (game) => `${Math.min(500, game.totalPowerups)}/500 Powerups`
     },
     {
       id: 'shields_50',
@@ -189,13 +189,13 @@
       progress: (game) => `${Math.min(10000, game.highScore).toLocaleString()}/10,000 PTS`
     },
     {
-      id: 'score_50k',
+      id: 'score_100k',
       icon: '👑',
       title: 'TURNTABLE LEGEND',
-      desc: 'Achieve a single-run high score of 50,000 Points',
-      reward: 10000,
-      check: (game) => game.highScore >= 50000,
-      progress: (game) => `${Math.min(50000, game.highScore).toLocaleString()}/50,000 PTS`
+      desc: 'Achieve a single-run high score of 100,000 Points',
+      reward: 15000,
+      check: (game) => game.highScore >= 100000,
+      progress: (game) => `${Math.min(100000, game.highScore).toLocaleString()}/100,000 PTS`
     },
     {
       id: 'career_1m',
@@ -301,7 +301,7 @@
       unlockPts: 35000,
       revPoints: 40,
       revRate: 2.4,
-      lanes: [9.0, 11.8, 14.6, 17.4, 20.2, 23.0], // 6 lanes
+      lanes: [10.0, 13.0, 16.0, 19.0, 22.0], // 5 lanes
       defaultLane: 2,
       hazardName: '☣️ Toxic Slime Pools',
       theme: {
@@ -334,9 +334,9 @@
       unlockPts: 100000,
       revPoints: 60,
       revRate: 3.5,
-      lanes: [8.0, 10.5, 13.0, 15.5, 18.0, 20.5, 23.0], // 7 lanes
-      defaultLane: 3,
-      hazardName: '🌀 Warp Portals (+50 PTS)',
+      lanes: [9.0, 11.8, 14.6, 17.4, 20.2, 23.0], // 6 lanes
+      defaultLane: 2,
+      hazardName: '🌀 Warp Portals (+500 PTS)',
       theme: {
         bgColor: 0x0d0417,
         fogColor: 0x0d0417,
@@ -367,8 +367,8 @@
       unlockPts: 250000,
       revPoints: 85,
       revRate: 5.0,
-      lanes: [7.5, 9.8, 12.1, 14.4, 16.7, 19.0, 21.3, 23.6], // 8 lanes
-      defaultLane: 3,
+      lanes: [9.0, 11.8, 14.6, 17.4, 20.2, 23.0], // 6 lanes
+      defaultLane: 2,
       hazardName: '❄️ Cryo Ice (Slows)',
       theme: {
         bgColor: 0x040e1a,
@@ -400,8 +400,8 @@
       unlockPts: 600000,
       revPoints: 120,
       revRate: 7.2,
-      lanes: [7.0, 9.0, 11.0, 13.0, 15.0, 17.0, 19.0, 21.0, 23.0], // 9 lanes
-      defaultLane: 4,
+      lanes: [8.0, 10.5, 13.0, 15.5, 18.0, 20.5, 23.0], // 7 lanes
+      defaultLane: 3,
       hazardName: '☀️ Plasma Sweepers',
       theme: {
         bgColor: 0x1a0505,
@@ -433,8 +433,8 @@
       unlockPts: 1200000,
       revPoints: 170,
       revRate: 10.0,
-      lanes: [6.5, 8.4, 10.3, 12.2, 14.1, 16.0, 17.9, 19.8, 21.7, 23.6], // 10 lanes
-      defaultLane: 4,
+      lanes: [8.0, 10.5, 13.0, 15.5, 18.0, 20.5, 23.0], // 7 lanes
+      defaultLane: 3,
       hazardName: '🚗 Lane Shifter Drone',
       theme: {
         bgColor: 0x16021f,
@@ -466,8 +466,8 @@
       unlockPts: 2500000,
       revPoints: 250,
       revRate: 15.0,
-      lanes: [6.0, 7.8, 9.6, 11.4, 13.2, 15.0, 16.8, 18.6, 20.4, 22.2, 24.0], // 11 lanes
-      defaultLane: 5,
+      lanes: [7.5, 9.8, 12.1, 14.4, 16.7, 19.0, 21.3, 23.6], // 8 lanes
+      defaultLane: 3,
       hazardName: '⚠️ Collapsing Lanes',
       theme: {
         bgColor: 0x050614,
@@ -4037,7 +4037,8 @@
         ring.position.y = -1.2;
         group.add(ring);
 
-        const textSprite = this.createFloatingTextSprite('+25 PTS', '#ff00cc');
+        const gemPts = ((this.selectedStageIndex || 0) + 1) * 25;
+        const textSprite = this.createFloatingTextSprite(`+${gemPts} PTS`, '#ff00cc');
         group.add(textSprite);
 
       } else if (type === 'MULTIPLIER') {
@@ -4768,17 +4769,17 @@
             this.targetRadius = obs.targetRadius;
             this.currentRadius = obs.targetRadius;
             this.cameraShakeIntensity = 0.6;
-            this.invulnerableTimer = 0.8;
+            this.invulnerableTimer = 1.0;
 
-            const warpBonus = 50 * this.scoreMultiplier;
+            const warpBonus = 500 * this.scoreMultiplier;
             this.score += warpBonus;
-            this.bankPoints += 25;
+            this.bankPoints += 500;
             this.totalPortals++;
             safeSet('disc_run_total_portals', this.totalPortals);
 
             if (window.soundEngine) window.soundEngine.playPortalWarpSound();
             this.spawnPickupBurst(_tempWorldPos, 0xcc00ff);
-            this.showDuckBonusToast('🌀 WARP BONUS! +50', true);
+            this.showDuckBonusToast(`🌀 WARP BONUS! +${warpBonus}`, true);
 
             const pId = obs.pairId;
             for (let p = this.obstacles.length - 1; p >= 0; p--) {
