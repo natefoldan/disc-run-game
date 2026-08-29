@@ -57,6 +57,8 @@ jobs:
       - name: Build Signed Android App Bundle (AAB) & Debug APK
         working-directory: ./android
         run: |
+          mkdir -p app
+          cp ../signing.keystore app/signing.keystore 2>/dev/null || true
           gradle wrapper --gradle-version 8.4 || true
           if [ -f "gradlew" ]; then
             chmod +x gradlew
