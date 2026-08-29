@@ -53,25 +53,12 @@ jobs:
 
       - name: Build Signed Android App Bundle (AAB) & Debug APK
         working-directory: ./android
-        env:
-          SIGNING_KEYSTORE_BASE64: ${{ secrets.SIGNING_KEYSTORE_BASE64 }}
-          SIGNING_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
-          SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
-          SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
         run: |
           chmod +x gradlew
-          if [ -n "$SIGNING_KEYSTORE_BASE64" ]; then
-            echo "$SIGNING_KEYSTORE_BASE64" | base64 -d > app/signing.keystore
-          elif [ -f "../signing.keystore" ]; then
-            cp ../signing.keystore app/signing.keystore
-          fi
-          ./gradlew bundleRelease assembleRelease assembleDebug --stacktrace
-          cp app/build/outputs/bundle/release/app-release.aab ../disc-run.aab
-          if [ -f "app/build/outputs/apk/release/app-release.apk" ]; then
-            cp app/build/outputs/apk/release/app-release.apk ../disc-run.apk
-          elif [ -f "app/build/outputs/apk/debug/app-debug.apk" ]; then
-            cp app/build/outputs/apk/debug/app-debug.apk ../disc-run.apk
-          fi
+          cp ../signing.keystore app/signing.keystore 2>/dev/null || true
+          ./gradlew bundleRelease assembleDebug --stacktrace
+          cp app/build/outputs/bundle/release/*.aab ../disc-run.aab
+          cp app/build/outputs/apk/debug/*.apk ../disc-run.apk 2>/dev/null || true
 
       - name: Upload Android App Bundle (AAB) Artifact
         uses: actions/upload-artifact@v4
