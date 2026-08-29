@@ -14,13 +14,16 @@ on:
   push:
     branches:
       - main
+    paths-ignore:
+      - 'README.md'
+      - '.gitignore'
 
 jobs:
-  build-android:
+  build-and-sign:
+    name: Build & Sign Pure Native Android Release
     runs-on: ubuntu-latest
     permissions:
       contents: write
-
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -37,16 +40,15 @@ jobs:
       - name: Sync Web Game Assets into Android Assets Folder
         run: |
           mkdir -p android/app/src/main/assets
-          cp index.html style.css game.js audio.js three.min.js manifest.json android/app/src/main/assets/
-          cp -r icon-*.png android/app/src/main/assets/ 2>/dev/null || true
-          cp signing.keystore android/app/signing.keystore 2>/dev/null || true
+          cp -r index.html style.css game.js audio.js three.min.js manifest.json icon-192.png icon-512.png icon-512-maskable.png android/app/src/main/assets/
 
       - name: Sync 3D App Icons to All Android Mipmap Densities
         run: |
-          for density in mdpi hdpi xhdpi xxhdpi xxxhdpi; do
-            mkdir -p android/app/src/main/res/mipmap-$density
-            cp icon-512.png android/app/src/main/res/mipmap-$density/ic_launcher.png 2>/dev/null || true
-            cp icon-512.png android/app/src/main/res/mipmap-$density/ic_launcher_round.png 2>/dev/null || true
+          for res in mdpi hdpi xhdpi xxhdpi xxxhdpi; do
+            mkdir -p android/app/src/main/res/mipmap-${res}
+            cp icon-512.png android/app/src/main/res/mipmap-${res}/ic_launcher.png
+            cp icon-512-maskable.png android/app/src/main/res/mipmap-${res}/ic_launcher_round.png
+            cp icon-512-maskable.png android/app/src/main/res/mipmap-${res}/ic_launcher_foreground.png
           done
 
       - name: Build Signed Android App Bundle (AAB) & Debug APK
@@ -64,16 +66,14 @@ jobs:
       - name: Upload Android App Bundle (AAB) Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Disc-Run-Android-App-Bundle-AAB
-          path: android/app/build/outputs/bundle/release/*.aab
-          retention-days: 14
+          name: disc-run-bundle-v${{ github.event.inputs.version_name || '1.0.18' }}
+          path: disc-run.aab
 
       - name: Upload Test APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Disc-Run-Android-APK
-          path: android/app/build/outputs/apk/debug/*.apk
-          retention-days: 14
+          name: disc-run-apk-v${{ github.event.inputs.version_name || '1.0.18' }}
+          path: disc-run.apk
 
       - name: Publish Direct Download GitHub Release
         uses: softprops/action-gh-release@v2
@@ -85,4 +85,6 @@ jobs:
           files: |
             disc-run.apk
             disc-run.aab
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
