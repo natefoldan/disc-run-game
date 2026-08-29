@@ -1,0 +1,50 @@
+apply plugin: 'com.android.application'
+
+android {
+    namespace 'com.coniferstudios.discrun'
+    compileSdk 35
+
+    defaultConfig {
+        applicationId "com.coniferstudios.discrun"
+        minSdk 22
+        targetSdk 35
+        versionCode 14
+        versionName "1.0.14"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    signingConfigs {
+        release {
+            storeFile file('signing.keystore')
+            storePassword 'MM62gVjuAiiq'
+            keyAlias 'my-key-alias'
+            keyPassword 'MM62gVjuAiiq'
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            signingConfig signingConfigs.release
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            signingConfig signingConfigs.release
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    lint {
+        abortOnError false
+        checkReleaseBuilds false
+    }
+}
+
+dependencies {
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'androidx.webkit:webkit:1.9.0'
+}

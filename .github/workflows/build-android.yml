@@ -1,4 +1,4 @@
-name: Build Native Android App Bundle (AAB & APK)
+name: Build Pure Native Android App Bundle (AAB & APK)
 
 on:
   workflow_dispatch:
@@ -6,11 +6,11 @@ on:
       version_code:
         description: 'Android Version Code'
         required: true
-        default: '12'
+        default: '14'
       version_name:
         description: 'Android Version Name'
         required: true
-        default: '1.0.12'
+        default: '1.0.14'
   push:
     branches:
       - main
@@ -25,11 +25,6 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Set up Node.js 20
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
       - name: Set up Java 17 (Temurin)
         uses: actions/setup-java@v4
         with:
@@ -39,29 +34,28 @@ jobs:
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Prepare Web Distribution Folder (www)
+      - name: Sync Web Game Assets into Android Assets Folder
         run: |
-          mkdir -p www
-          cp index.html style.css game.js audio.js three.min.js manifest.json www/
-          cp -r icon-*.png www/ 2>/dev/null || true
+          mkdir -p android/app/src/main/assets
+          cp index.html style.css game.js audio.js three.min.js manifest.json android/app/src/main/assets/
+          cp -r icon-*.png android/app/src/main/assets/ 2>/dev/null || true
+          cp signing.keystore android/app/signing.keystore 2>/dev/null || true
 
-      - name: Install NPM Dependencies
-        run: npm install
-
-      - name: Initialize Capacitor Android Platform
+      - name: Sync 3D App Icons to All Android Mipmap Densities
         run: |
-          npx cap add android || true
-          npx cap sync android
+          for density in mdpi hdpi xhdpi xxhdpi xxxhdpi; do
+            mkdir -p android/app/src/main/res/mipmap-$density
+            cp icon-512.png android/app/src/main/res/mipmap-$density/ic_launcher.png 2>/dev/null || true
+            cp icon-512.png android/app/src/main/res/mipmap-$density/ic_launcher_round.png 2>/dev/null || true
+          done
 
-      - name: Configure Package ID, Version, Fullscreen & Signing
-        run: |
-          node scripts/configure-android.js "${{ github.event.inputs.version_code || '12' }}" "${{ github.event.inputs.version_name || '1.0.12' }}"
-          echo "=== Verified build.gradle Configuration ==="
-          cat android/app/build.gradle | grep -E "versionCode|versionName|compileSdk|targetSdk|applicationId"
-
-      - name: Build Signed Android App Bundle (AAB) & APK
+      - name: Build Signed Android App Bundle (AAB) & Debug APK
         working-directory: android
         run: |
+          # If gradlew doesn't exist or isn't executable, generate via gradle wrapper
+          if [ ! -f "gradlew" ]; then
+            gradle wrapper --gradle-version 8.4
+          fi
           chmod +x gradlew
           ./gradlew bundleRelease assembleDebug --stacktrace
           cp app/build/outputs/apk/debug/*.apk ../disc-run.apk
@@ -85,9 +79,9 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: github.ref == 'refs/heads/main'
         with:
-          tag_name: "v1.0.12"
-          name: "Disc Run Android Native Release (v1.0.12)"
-          body: "Direct 1-tap download for Disc Run Native Android App (No URL bar, 100% offline, local Three.js bundle)."
+          tag_name: "v1.0.14"
+          name: "Disc Run Pure Native Android Release (v1.0.14)"
+          body: "Pure Native Android Studio Shell for Disc Run. 100% Offline, Hardware-Accelerated WebGL, Zero URL bar, Signed with release keystore."
           files: |
             disc-run.apk
             disc-run.aab
