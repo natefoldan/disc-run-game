@@ -29,10 +29,12 @@ Write-Host "Current Version: Code $currentVersionCode" -ForegroundColor Yellow
 Write-Host "Bumping to:      Code $nextVersionCode (v$nextVersionName)" -ForegroundColor Green
 Write-Host "Commit Message:  $Message" -ForegroundColor Gray
 
+$utf8NoBom = New-Object System.Text.UTF8Encoding($false)
+
 # 1. Update android/app/build.gradle
 $buildGradleContent = $buildGradleContent -replace 'versionCode\s+\d+', "versionCode $nextVersionCode"
 $buildGradleContent = $buildGradleContent -replace 'versionName\s+"[^"]+"', "versionName `"$nextVersionName`""
-Set-Content -Path $buildGradlePath -Value $buildGradleContent -Encoding UTF8
+[System.IO.File]::WriteAllText((Resolve-Path $buildGradlePath).Path, $buildGradleContent, $utf8NoBom)
 Write-Host "[1/5] Updated android/app/build.gradle" -ForegroundColor Green
 
 # 2. Update .github/workflows/build-android.yml
@@ -43,7 +45,7 @@ if (Test-Path $workflowPath) {
     $workflowContent = $workflowContent -replace "default:\s+'1\.0\.\d+'", "default: '$nextVersionName'"
     $workflowContent = $workflowContent -replace 'tag_name:\s+"v1\.0\.\d+"', "tag_name: `"v$nextVersionName`""
     $workflowContent = $workflowContent -replace 'name:\s+"Disc Run Pure Native Android Release \(v1\.0\.\d+\)"', "name: `"Disc Run Pure Native Android Release (v$nextVersionName)`""
-    Set-Content -Path $workflowPath -Value $workflowContent -Encoding UTF8
+    [System.IO.File]::WriteAllText((Resolve-Path $workflowPath).Path, $workflowContent, $utf8NoBom)
     Write-Host "[2/5] Updated .github/workflows/build-android.yml" -ForegroundColor Green
 }
 
