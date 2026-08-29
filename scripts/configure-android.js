@@ -1,7 +1,7 @@
 const fs = require('fs');
 
-const vCode = (process.argv[2] && process.argv[2].trim() !== '') ? process.argv[2].trim() : '11';
-const vName = (process.argv[3] && process.argv[3].trim() !== '') ? process.argv[3].trim() : '1.0.11';
+const vCode = (process.argv[2] && process.argv[2].trim() !== '') ? process.argv[2].trim() : '12';
+const vName = (process.argv[3] && process.argv[3].trim() !== '') ? process.argv[3].trim() : '1.0.12';
 
 console.log(`Configuring Android Build: Version Code ${vCode}, Version Name ${vName}, Target API Level 35`);
 
