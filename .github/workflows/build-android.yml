@@ -50,15 +50,16 @@ jobs:
           done
 
       - name: Build Signed Android App Bundle (AAB) & Debug APK
-        working-directory: android
+        working-directory: ./android
         run: |
           if [ ! -f "gradlew" ]; then
             gradle wrapper --gradle-version 8.4
           fi
           chmod +x gradlew
+          cp ../signing.keystore app/signing.keystore 2>/dev/null || true
           ./gradlew bundleRelease assembleDebug --stacktrace
-          cp app/build/outputs/apk/debug/*.apk ../disc-run.apk
           cp app/build/outputs/bundle/release/*.aab ../disc-run.aab
+          cp app/build/outputs/apk/debug/*.apk ../disc-run.apk 2>/dev/null || true
 
       - name: Upload Android App Bundle (AAB) Artifact
         uses: actions/upload-artifact@v4
