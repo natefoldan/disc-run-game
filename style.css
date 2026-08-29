@@ -1005,6 +1005,11 @@ kbd {
   border-color: rgba(180, 0, 255, 0.4);
 }
 
+.shop-item-icon.turbine-icon {
+  background: rgba(0, 240, 255, 0.18);
+  border-color: rgba(0, 240, 255, 0.45);
+}
+
 .restart-locked {
   opacity: 0.55 !important;
   cursor: wait !important;

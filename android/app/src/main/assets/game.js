@@ -502,11 +502,15 @@
   const DUCKING_HEIGHT = 0.32;
   const BAR_CLEARANCE_HEIGHT = 0.78;
 
-  // Calibrated Upgrade Progression Tables (5 Upgrades - Premium Economy)
+  // Calibrated Upgrade Progression Tables (6 Upgrades - Premium Economy)
   const BASE_DUCK_DURATION = 0.50;
   const DUCK_INCREMENT = 0.05;
   const MAX_DUCK_LEVEL = 10;
   const DUCK_COSTS = [1200, 3000, 7500, 15000, 28000, 48000, 75000, 115000, 175000];
+
+  const MAX_REV_BONUS_LEVEL = 5;
+  const REV_BONUS_TIERS = [0, 1, 3, 6, 10, 15];
+  const REV_BONUS_COSTS = [4000, 12000, 32000, 80000, 200000];
 
   const MAX_SHIELD_LEVEL = 3;
   const SHIELD_COSTS = [5000, 16000, 45000];
@@ -589,10 +593,13 @@
       // Controls Inversion Setting
       this.invertedControls = safeGet('disc_run_inverted_controls', 'false') === 'true';
 
-      // 5 Persistent Upgrades (Duck, Shield, Deflector, Booster, Magnet)
+      // 6 Persistent Upgrades (Duck, Rev Yield, Shield, Deflector, Booster, Magnet)
       this.duckLevel = parseInt(safeGet('disc_run_duck_level', '1'), 10) || 1;
       if (this.duckLevel < 1) this.duckLevel = 1;
       if (this.duckLevel > MAX_DUCK_LEVEL) this.duckLevel = MAX_DUCK_LEVEL;
+
+      this.revBonusLevel = parseInt(safeGet('disc_run_rev_bonus_level', '0'), 10) || 0;
+      if (this.revBonusLevel > MAX_REV_BONUS_LEVEL) this.revBonusLevel = MAX_REV_BONUS_LEVEL;
 
       this.shieldLevel = parseInt(safeGet('disc_run_shield_level', '0'), 10) || 0;
       if (this.shieldLevel > MAX_SHIELD_LEVEL) this.shieldLevel = MAX_SHIELD_LEVEL;
@@ -1184,11 +1191,16 @@
       this.gameoverControlsToggleBtn = document.getElementById('gameover-controls-toggle');
       this.gameoverControlsLabel = document.getElementById('gameover-controls-label');
 
-      // Upgrade Shop Elements (5 Upgrades)
+      // Upgrade Shop Elements (6 Upgrades)
       this.startDuckStat = document.getElementById('start-duck-stat');
       this.startUpgradeDuckBtn = document.getElementById('start-upgrade-duck-btn');
       this.gameoverDuckStat = document.getElementById('gameover-duck-stat');
       this.gameoverUpgradeDuckBtn = document.getElementById('gameover-upgrade-duck-btn');
+
+      this.startRevBonusStat = document.getElementById('start-rev-bonus-stat');
+      this.startUpgradeRevBonusBtn = document.getElementById('start-upgrade-rev-bonus-btn');
+      this.gameoverRevBonusStat = document.getElementById('gameover-rev-bonus-stat');
+      this.gameoverUpgradeRevBonusBtn = document.getElementById('gameover-upgrade-rev-bonus-btn');
 
       this.startShieldStat = document.getElementById('start-shield-stat');
       this.startUpgradeShieldBtn = document.getElementById('start-upgrade-shield-btn');
@@ -1839,6 +1851,7 @@
         bar.fill.style.width = milestonePct + '%';
       });
 
+      const bonusPts = REV_BONUS_TIERS[this.revBonusLevel] || 0;
       const stageCards = document.querySelectorAll('.stage-card');
       stageCards.forEach((card) => {
         const stageId = parseInt(card.dataset.stage, 10);
@@ -1849,6 +1862,12 @@
 
         card.classList.toggle('active-stage', isActive);
         card.classList.toggle('locked-stage', !isUnlocked);
+
+        const descEl = card.querySelector('.stage-theme-desc');
+        if (descEl) {
+          const totalRevPts = stageDef.revPoints + bonusPts;
+          descEl.textContent = `${stageDef.lanes.length} Lanes • +${totalRevPts} PTS/Rev (${stageDef.revRate.toFixed(1)}x) • Hazard: ${stageDef.hazardName}`;
+        }
 
         const badgeEl = card.querySelector('.stage-status-badge');
         if (badgeEl) {
@@ -1923,7 +1942,31 @@
         btn.disabled = isDuckMax || !canAffordDuck;
       });
 
-      // 2. Crash Shield Status
+      // 2. Orbit Turbine (Rotation Yield Bonus)
+      const bonusYield = REV_BONUS_TIERS[this.revBonusLevel] || 0;
+      const revBonusLvlText = this.revBonusLevel === 0
+        ? 'LVL 0 (OFF)'
+        : `LVL ${this.revBonusLevel} (+${bonusYield}/REV)`;
+      if (this.startRevBonusStat) this.startRevBonusStat.textContent = revBonusLvlText;
+      if (this.gameoverRevBonusStat) this.gameoverRevBonusStat.textContent = revBonusLvlText;
+
+      const isRevBonusMax = this.revBonusLevel >= MAX_REV_BONUS_LEVEL;
+      const revBonusCost = REV_BONUS_COSTS[this.revBonusLevel] || 0;
+      const nextBonusYield = REV_BONUS_TIERS[this.revBonusLevel + 1] || 0;
+      const yieldGain = nextBonusYield - bonusYield;
+      const revBonusBtnHtml = isRevBonusMax
+        ? `MAX TURBINE (+15/REV)`
+        : (this.revBonusLevel === 0
+            ? `UNLOCK TURBINE (+1/REV) &bull; <span>${revBonusCost.toLocaleString()}</span> PTS`
+            : `UPGRADE (+${yieldGain}/REV) &bull; <span>${revBonusCost.toLocaleString()}</span> PTS`);
+
+      [this.startUpgradeRevBonusBtn, this.gameoverUpgradeRevBonusBtn].forEach((btn) => {
+        if (!btn) return;
+        btn.innerHTML = revBonusBtnHtml;
+        btn.disabled = isRevBonusMax || this.bankPoints < revBonusCost;
+      });
+
+      // 3. Crash Shield Status
       const shieldLvlText = this.shieldLevel === 0
         ? 'LVL 0 (OFF)'
         : `LVL ${this.shieldLevel} (${this.shieldLevel}/3 SHIELDS)`;
@@ -2031,6 +2074,22 @@
       }
     }
 
+    buyRevBonusUpgrade() {
+      if (this.revBonusLevel >= MAX_REV_BONUS_LEVEL) return;
+      const cost = REV_BONUS_COSTS[this.revBonusLevel] || 0;
+      if (this.bankPoints >= cost) {
+        this.bankPoints -= cost;
+        this.revBonusLevel += 1;
+
+        safeSet('disc_run_rev_bonus_level', this.revBonusLevel);
+        safeSet('disc_run_bank_points', this.bankPoints);
+
+        if (window.soundEngine) window.soundEngine.playUpgradeSound();
+        this.updateUpgradeShopUI();
+        this.updateStageSelectorUI();
+      }
+    }
+
     buyShieldUpgrade() {
       if (this.shieldLevel >= MAX_SHIELD_LEVEL) return;
       const cost = SHIELD_COSTS[this.shieldLevel] || 0;
@@ -2123,6 +2182,7 @@
       safeRemove('disc_run_career_points');
       safeRemove('disc_run_selected_stage');
       safeRemove('disc_run_duck_level');
+      safeRemove('disc_run_rev_bonus_level');
       safeRemove('disc_run_shield_level');
       safeRemove('disc_run_deflector_level');
       safeRemove('disc_run_booster_level');
@@ -2150,6 +2210,7 @@
       this.highestSeenStage = 0;
       this.hasSeenUpgradePrompt = false;
       this.duckLevel = 1;
+      this.revBonusLevel = 0;
       this.shieldLevel = 0;
       this.deflectorLevel = 0;
       this.boosterLevel = 0;
@@ -2688,6 +2749,9 @@
 
       bindClick(this.startUpgradeDuckBtn, () => this.buyDuckUpgrade());
       bindClick(this.gameoverUpgradeDuckBtn, () => this.buyDuckUpgrade());
+
+      bindClick(this.startUpgradeRevBonusBtn, () => this.buyRevBonusUpgrade());
+      bindClick(this.gameoverUpgradeRevBonusBtn, () => this.buyRevBonusUpgrade());
 
       bindClick(this.startUpgradeShieldBtn, () => this.buyShieldUpgrade());
       bindClick(this.gameoverUpgradeShieldBtn, () => this.buyShieldUpgrade());
@@ -4328,7 +4392,8 @@
       // Revolution Complete Milestone Award (Per-Stage Points + Orbit Multiplier)
       const currentFullRev = Math.floor(this.rotationsCleared);
       if (currentFullRev > this.lastAwardedRevolution) {
-        const stageRevPts = this.currentStage.revPoints || 100;
+        const bonusYield = REV_BONUS_TIERS[this.revBonusLevel] || 0;
+        const stageRevPts = (this.currentStage.revPoints || 15) + bonusYield;
         const revBonus = stageRevPts * this.getOrbitMultiplier() * this.scoreMultiplier;
         this.score += revBonus;
         this.lastAwardedRevolution = currentFullRev;
@@ -4463,14 +4528,16 @@
           col.collected = true;
 
           if (col.type === 'GEM') {
-            const pts = 25 * this.scoreMultiplier;
+            const stageGemBasePoints = ((this.selectedStageIndex || 0) + 1) * 25;
+            const pts = stageGemBasePoints * this.scoreMultiplier;
             this.score += pts;
-            this.bankPoints += 25;
+            this.bankPoints += stageGemBasePoints;
             this.totalGems++;
             safeSet('disc_run_total_gems', this.totalGems);
 
             if (window.soundEngine) window.soundEngine.playGemSound();
             this.spawnPickupBurst(_tempWorldPos, 0xff00bb);
+            this.showDuckBonusToast(`+${pts} PTS!`, false);
           } else if (col.type === 'MULTIPLIER') {
             this.activatePowerup('MULTIPLIER', 10);
             this.totalPowerups++;
