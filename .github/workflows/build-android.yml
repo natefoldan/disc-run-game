@@ -6,11 +6,11 @@ on:
       version_code:
         description: 'Android Version Code'
         required: true
-        default: '18'
+        default: '19'
       version_name:
         description: 'Android Version Name'
         required: true
-        default: '1.0.18'
+        default: '1.0.19'
   push:
     branches:
       - main
@@ -80,21 +80,32 @@ jobs:
       - name: Upload Android App Bundle (AAB) Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: disc-run-bundle-v${{ github.event.inputs.version_name || '1.0.18' }}
+          name: disc-run-bundle-v${{ github.event.inputs.version_name || '1.0.19' }}
           path: disc-run.aab
 
       - name: Upload Test APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: disc-run-apk-v${{ github.event.inputs.version_name || '1.0.18' }}
+          name: disc-run-apk-v${{ github.event.inputs.version_name || '1.0.19' }}
           path: disc-run.apk
+
+      - name: Publish Failure Log if Build Fails
+        uses: softprops/action-gh-release@v2
+        if: failure() && github.ref == 'refs/heads/main'
+        with:
+          tag_name: "build-failure-log"
+          name: "Build Failure Diagnostics Log"
+          body: "Gradle build failure logs for inspection."
+          files: gradle_build.log
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish Direct Download GitHub Release
         uses: softprops/action-gh-release@v2
-        if: github.ref == 'refs/heads/main'
+        if: success() && github.ref == 'refs/heads/main'
         with:
-          tag_name: "v1.0.18"
-          name: "Disc Run Pure Native Android Release (v1.0.18)"
+          tag_name: "v1.0.19"
+          name: "Disc Run Pure Native Android Release (v1.0.19)"
           body: "Pure Native Android Studio Shell for Disc Run. 100% Offline, Hardware-Accelerated WebGL, Zero URL bar, Signed with release keystore."
           files: |
             disc-run.apk

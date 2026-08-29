@@ -1898,17 +1898,21 @@
       const isMobile = this.isMobileDevice();
       let modeText;
       if (isMobile) {
-        modeText = this.invertedControls ? 'TAP RIGHT◀ LEFT▶ (INVERTED)' : 'TAP LEFT◀ RIGHT▶ (NORMAL)';
+        modeText = this.invertedControls
+          ? 'LEFT: RIM ◀ | ▶ CENTER: RIGHT (INVERTED)'
+          : 'LEFT: CENTER ◀ | ▶ RIM: RIGHT (NORMAL)';
       } else {
-        modeText = this.invertedControls ? 'A▶ D◀ (INVERTED)' : 'A◀ D▶ (NORMAL)';
+        modeText = this.invertedControls
+          ? 'A: RIM ◀ | ▶ CENTER: D (INVERTED)'
+          : 'A: CENTER ◀ | ▶ RIM: D (NORMAL)';
       }
       if (this.startControlsLabel) this.startControlsLabel.textContent = modeText;
       if (this.gameoverControlsLabel) this.gameoverControlsLabel.textContent = modeText;
 
       if (this.hintKeys) {
         this.hintKeys.innerHTML = this.invertedControls
-          ? '<kbd>A</kbd> &rarr; / <kbd>D</kbd> &larr;'
-          : '<kbd>&larr;</kbd> <kbd>&rarr;</kbd> or <kbd>A</kbd> <kbd>D</kbd>';
+          ? '<kbd>A</kbd> Rim &bull; <kbd>D</kbd> Center'
+          : '<kbd>A</kbd> / <kbd>&larr;</kbd> Center &bull; <kbd>D</kbd> / <kbd>&rarr;</kbd> Rim';
       }
 
       this.updateControlsHintUI();
@@ -2710,9 +2714,9 @@
 
         if (this.state === STATE.PLAYING) {
           if (e.code === 'ArrowLeft' || e.code === 'KeyA') {
-            this.shiftLane(this.invertedControls ? -1 : 1);
-          } else if (e.code === 'ArrowRight' || e.code === 'KeyD') {
             this.shiftLane(this.invertedControls ? 1 : -1);
+          } else if (e.code === 'ArrowRight' || e.code === 'KeyD') {
+            this.shiftLane(this.invertedControls ? -1 : 1);
           } else if (e.code === 'Space' || e.code === 'ArrowDown' || e.code === 'KeyS') {
             this.setDucking(true);
           }
@@ -2862,15 +2866,15 @@
           }
 
           if (xPct < 0.275) {
-            // LEFT ZONE: Tap anywhere on left side of screen
-            this.shiftLane(this.invertedControls ? -1 : 1);
+            // LEFT ZONE: Tap anywhere on left side of screen (towards Center)
+            this.shiftLane(this.invertedControls ? 1 : -1);
             if (this.zoneLeftGuide) {
               this.zoneLeftGuide.classList.add('touch-active');
               setTimeout(() => { if (this.zoneLeftGuide) this.zoneLeftGuide.classList.remove('touch-active'); }, 140);
             }
           } else if (xPct > 0.725) {
-            // RIGHT ZONE: Tap anywhere on right side of screen
-            this.shiftLane(this.invertedControls ? 1 : -1);
+            // RIGHT ZONE: Tap anywhere on right side of screen (towards Outer Rim)
+            this.shiftLane(this.invertedControls ? -1 : 1);
             if (this.zoneRightGuide) {
               this.zoneRightGuide.classList.add('touch-active');
               setTimeout(() => { if (this.zoneRightGuide) this.zoneRightGuide.classList.remove('touch-active'); }, 140);
@@ -2959,8 +2963,8 @@
         }
       };
 
-      addTouchBtn(this.touchLeftBtn, () => this.shiftLane(this.invertedControls ? -1 : 1));
-      addTouchBtn(this.touchRightBtn, () => this.shiftLane(this.invertedControls ? 1 : -1));
+      addTouchBtn(this.touchLeftBtn, () => this.shiftLane(this.invertedControls ? 1 : -1));
+      addTouchBtn(this.touchRightBtn, () => this.shiftLane(this.invertedControls ? -1 : 1));
       addTouchBtn(this.touchDuckBtn, () => this.setDucking(true), () => this.setDucking(false));
     }
 

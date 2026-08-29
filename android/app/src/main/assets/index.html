@@ -118,7 +118,7 @@
       <div class="touch-zone-area zone-left" id="zone-left-guide">
         <div class="zone-guide-content">
           <span class="zone-icon">◀</span>
-          <span class="zone-text">TAP TO STEER</span>
+          <span class="zone-text">TO CENTER</span>
         </div>
       </div>
       <div class="touch-zone-area zone-center" id="zone-center-guide">
@@ -130,7 +130,7 @@
       <div class="touch-zone-area zone-right" id="zone-right-guide">
         <div class="zone-guide-content">
           <span class="zone-icon">▶</span>
-          <span class="zone-text">TAP TO STEER</span>
+          <span class="zone-text">TO RIM</span>
         </div>
       </div>
     </div>
@@ -138,11 +138,11 @@
     <!-- On-screen Tutorial & Keybind Hints (Desktop & Mobile Adaptive) -->
     <div id="controls-hint" class="hidden">
       <div id="controls-hint-desktop" class="hint-layout-desktop">
-        <div class="hint-item"><span id="hint-keys"><kbd>&larr;</kbd> <kbd>&rarr;</kbd> or <kbd>A</kbd> <kbd>D</kbd></span> Dodge Blocks</div>
+        <div class="hint-item"><span id="hint-keys"><kbd>A</kbd> / <kbd>&larr;</kbd> Center &bull; <kbd>D</kbd> / <kbd>&rarr;</kbd> Rim</span> Dodge Blocks</div>
         <div class="hint-item"><kbd>SPACE</kbd> or <kbd>&darr;</kbd> Duck Under Bars (<span id="hint-duck-duration">0.50s</span> Max)</div>
       </div>
       <div id="controls-hint-mobile" class="hint-layout-mobile hidden">
-        <div class="hint-item"><span class="touch-zone-pill">TAP LEFT / RIGHT</span> Steer Lanes</div>
+        <div class="hint-item"><span class="touch-zone-pill">TAP LEFT: CENTER • RIGHT: RIM</span></div>
         <div class="hint-item"><span class="touch-zone-pill duck-pill">HOLD CENTER</span> Duck (<span id="hint-duck-duration-mobile">0.50s</span> Max)</div>
       </div>
     </div>
@@ -303,7 +303,7 @@
           <div class="controls-setting-box">
             <span class="setting-label">STEERING:</span>
             <button id="start-controls-toggle" class="setting-toggle-btn" type="button">
-              <span class="swap-icon">⇄</span> <span id="start-controls-label">A◀ D▶ (NORMAL)</span>
+              <span class="swap-icon">⇄</span> <span id="start-controls-label">LEFT: CENTER ◀ | ▶ RIM: RIGHT (NORMAL)</span>
             </button>
           </div>
 
@@ -643,7 +643,7 @@
           <div class="controls-setting-box">
             <span class="setting-label">STEERING:</span>
             <button id="gameover-controls-toggle" class="setting-toggle-btn" type="button">
-              <span class="swap-icon">⇄</span> <span id="gameover-controls-label">A◀ D▶ (NORMAL)</span>
+              <span class="swap-icon">⇄</span> <span id="gameover-controls-label">LEFT: CENTER ◀ | ▶ RIM: RIGHT (NORMAL)</span>
             </button>
           </div>
 
