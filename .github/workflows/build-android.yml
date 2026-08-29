@@ -37,6 +37,9 @@ jobs:
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
 
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
       - name: Sync Web Game Assets into Android Assets Folder
         run: |
           mkdir -p android/app/src/main/assets
@@ -54,12 +57,13 @@ jobs:
       - name: Build Signed Android App Bundle (AAB) & Debug APK
         working-directory: ./android
         run: |
-          if [ ! -f "gradlew" ]; then
-            gradle wrapper --gradle-version 8.4
+          gradle wrapper --gradle-version 8.4 || true
+          if [ -f "gradlew" ]; then
+            chmod +x gradlew
+            ./gradlew bundleRelease assembleDebug --stacktrace
+          else
+            gradle bundleRelease assembleDebug --stacktrace
           fi
-          chmod +x gradlew
-          cp ../signing.keystore app/signing.keystore 2>/dev/null || true
-          ./gradlew bundleRelease assembleDebug --stacktrace
           cp app/build/outputs/bundle/release/*.aab ../disc-run.aab
           cp app/build/outputs/apk/debug/*.apk ../disc-run.apk 2>/dev/null || true
 
