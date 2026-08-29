@@ -6,11 +6,11 @@ on:
       version_code:
         description: 'Android Version Code'
         required: true
-        default: '6'
+        default: '7'
       version_name:
         description: 'Android Version Name'
         required: true
-        default: '1.0.6'
+        default: '1.0.7'
   push:
     branches:
       - main
@@ -53,7 +53,7 @@ jobs:
 
       - name: Configure Package ID, Version, Fullscreen & Signing
         run: |
-          node scripts/configure-android.js "${{ github.event.inputs.version_code || '6' }}" "${{ github.event.inputs.version_name || '1.0.6' }}"
+          node scripts/configure-android.js "${{ github.event.inputs.version_code || '7' }}" "${{ github.event.inputs.version_name || '1.0.7' }}"
           echo "=== Verified build.gradle Configuration ==="
           cat android/app/build.gradle | grep -E "versionCode|versionName|compileSdk|targetSdk|applicationId"
 

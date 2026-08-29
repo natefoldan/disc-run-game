@@ -15,7 +15,6 @@ body, html {
   background-color: #080914;
   font-family: 'Rajdhani', -apple-system, BlinkMacSystemFont, sans-serif;
   color: #fff;
-  touch-action: none;
 }
 
 #game-container {
@@ -25,7 +24,6 @@ body, html {
   display: flex;
   justify-content: center;
   align-items: center;
-  touch-action: none;
 }
 
 #game-canvas {
@@ -36,6 +34,16 @@ body, html {
   height: 100%;
   display: block;
   touch-action: none;
+}
+
+.overlay-screen, .modal-backdrop, .modal-content, .stages-list, .workshop-list {
+  touch-action: pan-y;
+  -webkit-overflow-scrolling: touch;
+}
+
+button, .stage-card, .upgrade-card, .mobile-tab-btn, .glow-button, .stats-text-btn, .achieve-text-btn, .danger-text-btn {
+  touch-action: manipulation;
+  cursor: pointer;
 }
 
 /* =========================================================
