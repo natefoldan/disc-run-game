@@ -18,6 +18,8 @@ on:
 jobs:
   build-android:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
       - name: Checkout Repository
@@ -68,6 +70,8 @@ jobs:
         run: |
           chmod +x gradlew
           ./gradlew bundleRelease assembleDebug --stacktrace
+          cp app/build/outputs/apk/debug/*.apk ../disc-run.apk
+          cp app/build/outputs/bundle/release/*.aab ../disc-run.aab
 
       - name: Upload Android App Bundle (AAB) Artifact
         uses: actions/upload-artifact@v4
@@ -82,3 +86,16 @@ jobs:
           name: Disc-Run-Android-APK
           path: android/app/build/outputs/apk/debug/*.apk
           retention-days: 14
+
+      - name: Publish Direct Download GitHub Release
+        uses: softprops/action-gh-release@v2
+        if: github.ref == 'refs/heads/main'
+        with:
+          tag_name: "v1.0.7"
+          name: "Disc Run Android Native Release (v1.0.7)"
+          body: "Direct 1-tap download for Disc Run Native Android App (No URL bar, 100% offline)."
+          files: |
+            disc-run.apk
+            disc-run.aab
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
