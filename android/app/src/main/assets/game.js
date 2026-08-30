@@ -1234,6 +1234,27 @@
       this.touchRightBtn = document.getElementById('touch-right');
       this.touchDuckBtn = document.getElementById('touch-duck');
       this.touchDuckTimer = document.getElementById('touch-duck-timer');
+
+      // Native Android AdMob Bridge Callbacks
+      window.onAndroidRewardEarned = (type) => {
+        if (type === 'revive') {
+          this.executeAdRevive();
+        } else if (type === 'double_points') {
+          this.executeAdDoublePoints();
+        }
+      };
+
+      window.onAndroidAdUnavailable = (type) => {
+        if (type === 'revive') {
+          this.executeAdRevive();
+        } else if (type === 'double_points') {
+          this.executeAdDoublePoints();
+        }
+      };
+
+      if (window.AndroidAds && typeof window.AndroidAds.showBanner === 'function') {
+        window.AndroidAds.showBanner();
+      }
     }
 
     // --- Achievements System ---
@@ -2974,6 +2995,9 @@
       this.state = STATE.DROPPING;
       this.isPaused = false;
       this.canRestart = true;
+      if (window.AndroidAds && typeof window.AndroidAds.hideBanner === 'function') {
+        window.AndroidAds.hideBanner();
+      }
       if (this.startScreen) this.startScreen.classList.add('hidden');
       if (this.gameOverScreen) this.gameOverScreen.classList.add('hidden');
       if (this.pauseScreen) this.pauseScreen.classList.add('hidden');
@@ -3127,9 +3151,22 @@
     handleAdRevive() {
       if (!this.canReviveThisRun || this.state !== STATE.GAME_OVER) return;
 
+      if (window.AndroidAds && typeof window.AndroidAds.showRewardedAd === 'function') {
+        window.AndroidAds.showRewardedAd('revive');
+      } else {
+        this.executeAdRevive();
+      }
+    }
+
+    executeAdRevive() {
+      if (!this.canReviveThisRun || this.state !== STATE.GAME_OVER) return;
+
       this.canReviveThisRun = false;
       this.state = STATE.PLAYING;
       this.isPaused = false;
+      if (window.AndroidAds && typeof window.AndroidAds.hideBanner === 'function') {
+        window.AndroidAds.hideBanner();
+      }
 
       if (this.postRunModal) this.postRunModal.classList.add('hidden');
       if (this.gameOverScreen) this.gameOverScreen.classList.add('hidden');
@@ -3178,6 +3215,16 @@
     handleAdDoublePoints() {
       if (this.pointsDoubledThisLoss || this.state !== STATE.GAME_OVER) return;
 
+      if (window.AndroidAds && typeof window.AndroidAds.showRewardedAd === 'function') {
+        window.AndroidAds.showRewardedAd('double_points');
+      } else {
+        this.executeAdDoublePoints();
+      }
+    }
+
+    executeAdDoublePoints() {
+      if (this.pointsDoubledThisLoss || this.state !== STATE.GAME_OVER) return;
+
       this.pointsDoubledThisLoss = true;
       if (this.postrunDoubleBtn) this.postrunDoubleBtn.disabled = true;
 
@@ -3221,6 +3268,10 @@
       this.state = STATE.GAME_OVER;
       this.isPaused = false;
       this.canRestart = false;
+
+      if (window.AndroidAds && typeof window.AndroidAds.showBanner === 'function') {
+        window.AndroidAds.showBanner();
+      }
 
       if (this.restartBtn) {
         this.restartBtn.classList.add('restart-locked');

@@ -8,8 +8,8 @@ android {
         applicationId "com.coniferstudios.discrun"
         minSdk 22
         targetSdk 35
-        versionCode 19
-        versionName "1.0.19"
+        versionCode 20
+        versionName "1.0.20"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -47,5 +47,6 @@ android {
 dependencies {
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'androidx.webkit:webkit:1.9.0'
+    implementation 'com.google.android.gms:play-services-ads:23.3.0'
 }
 

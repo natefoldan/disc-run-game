@@ -12,6 +12,11 @@
         android:theme="@style/Theme.DiscRun.Fullscreen"
         android:hardwareAccelerated="true">
 
+        <!-- Google AdMob Application ID -->
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-4395267773413987~5899731884"/>
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
