@@ -1,0 +1,222 @@
+﻿<!DOCTYPE html>
+<html lang=en>
+<head>
+  <meta charset=UTF-8>
+  <title>Disc Run - Feature Graphic (1024x500)</title>
+  <link href=https://fonts.googleapis.com/css2?family=Orbitron:wght@800;900&family=Rajdhani:wght@600;700;800&display=swap rel=stylesheet>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      width: 1024px;
+      height: 500px;
+      background: radial-gradient(circle at 65% 50%, #150a30 0%, #060714 70%, #03040a 100%);
+      font-family: 'Rajdhani', sans-serif;
+      overflow: hidden;
+      position: relative;
+      color: #fff;
+    }
+    
+    /* Background Grid & Ambient Glows */
+    .bg-grid {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background-image: 
+        linear-gradient(rgba(0, 240, 255, 0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 240, 255, 0.08) 1px, transparent 1px);
+      background-size: 32px 32px;
+      transform: perspective(600px) rotateX(45deg) scale(1.6) translateY(-50px);
+      opacity: 0.45;
+    }
+    .glow-cyan {
+      position: absolute;
+      top: 50px; left: 580px;
+      width: 380px; height: 380px;
+      background: radial-gradient(circle, rgba(0, 240, 255, 0.28) 0%, rgba(0, 240, 255, 0) 70%);
+      filter: blur(40px);
+    }
+    .glow-magenta {
+      position: absolute;
+      top: 80px; left: 680px;
+      width: 320px; height: 320px;
+      background: radial-gradient(circle, rgba(255, 0, 128, 0.3) 0%, rgba(255, 0, 128, 0) 70%);
+      filter: blur(40px);
+    }
+
+    /* Left Branding & Typography */
+    .brand-container {
+      position: absolute;
+      top: 0; left: 0;
+      width: 580px;
+      height: 100%;
+      padding: 60px 0 0 60px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      z-index: 10;
+    }
+    .category-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'Orbitron', monospace;
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 3px;
+      color: #00f0ff;
+      background: rgba(0, 240, 255, 0.12);
+      border: 1px solid rgba(0, 240, 255, 0.5);
+      padding: 5px 14px;
+      border-radius: 20px;
+      width: fit-content;
+      margin-bottom: 14px;
+      text-shadow: 0 0 10px rgba(0, 240, 255, 0.8);
+      box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
+    }
+    .game-title {
+      font-family: 'Orbitron', monospace;
+      font-size: 68px;
+      font-weight: 900;
+      line-height: 0.95;
+      letter-spacing: 2px;
+      background: linear-gradient(135deg, #ffffff 0%, #00f0ff 50%, #ff007f 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 0 25px rgba(0, 240, 255, 0.5));
+      margin-bottom: 12px;
+    }
+    .game-subtitle {
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: #e2e8f0;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+    }
+    .highlights-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .highlight-pill {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: #cbd5e1;
+      backdrop-filter: blur(8px);
+    }
+    .highlight-pill span { color: #ffcc00; }
+
+    /* Right 3D Visual Vinyl Disc & Turntable Art */
+    .disc-showcase {
+      position: absolute;
+      top: 50%;
+      right: 40px;
+      transform: translateY(-50%) perspective(800px) rotateY(-18deg) rotateX(15deg);
+      width: 400px;
+      height: 400px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 5;
+    }
+    .vinyl-disc {
+      width: 360px;
+      height: 360px;
+      border-radius: 50%;
+      background: radial-gradient(circle, 
+        #050814 0%, 
+        #0a1128 20%, 
+        #040714 25%, 
+        #111827 45%, 
+        #040714 50%, 
+        #1e1b4b 70%, 
+        #030712 85%, 
+        #00f0ff 98%, 
+        #ff007f 100%
+      );
+      box-shadow: 
+        0 0 50px rgba(0, 240, 255, 0.5),
+        0 0 90px rgba(255, 0, 128, 0.35),
+        inset 0 0 40px rgba(0, 240, 255, 0.6);
+      border: 3px solid rgba(0, 240, 255, 0.8);
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: spin 20s linear infinite;
+    }
+    .disc-groove-1 {
+      position: absolute;
+      width: 280px; height: 280px;
+      border-radius: 50%;
+      border: 2px dashed rgba(0, 240, 255, 0.35);
+    }
+    .disc-groove-2 {
+      position: absolute;
+      width: 200px; height: 200px;
+      border-radius: 50%;
+      border: 2px solid rgba(255, 0, 128, 0.4);
+    }
+    .disc-center-hub {
+      width: 120px; height: 120px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #ff007f 0%, #1e1b4b 60%, #030712 100%);
+      border: 3px solid #ffea00;
+      box-shadow: 0 0 25px rgba(255, 234, 0, 0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 42px;
+    }
+    .runner-avatar {
+      position: absolute;
+      top: 65px;
+      left: 175px;
+      width: 50px;
+      height: 60px;
+      background: linear-gradient(180deg, #00f0ff 0%, #ff007f 100%);
+      border-radius: 12px;
+      box-shadow: 0 0 30px #00f0ff, 0 0 50px #ff007f;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      transform: rotate(-10deg);
+      border: 2px solid #fff;
+    }
+  </style>
+</head>
+<body>
+  <div class=bg-grid></div>
+  <div class=glow-cyan></div>
+  <div class=glow-magenta></div>
+
+  <div class=brand-container>
+    <div class=category-badge>⚡ 3D TURNTABLE RUNNER</div>
+    <h1 class=game-title>DISC RUN</h1>
+    <div class=game-subtitle>SURVIVE THE SPIN &bull; DODGE & DUCK</div>
+    <div class=highlights-row>
+      <div class=highlight-pill><span>🌀</span> 8 Cyber Worlds</div>
+      <div class=highlight-pill><span>⚡</span> 6 Workshop Upgrades</div>
+      <div class=highlight-pill><span>📶</span> 100% Offline</div>
+    </div>
+  </div>
+
+  <div class=disc-showcase>
+    <div class=vinyl-disc>
+      <div class=disc-groove-1></div>
+      <div class=disc-groove-2></div>
+      <div class=disc-center-hub>💿</div>
+      <div class=runner-avatar>⚡</div>
+    </div>
+  </div>
+</body>
+</html>
