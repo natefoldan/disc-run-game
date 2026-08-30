@@ -1,0 +1,156 @@
+﻿<!DOCTYPE html>
+<html lang=en>
+<head>
+  <meta charset=UTF-8>
+  <title>Disc Run - New App Icon Options Preview</title>
+  <link href=https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Rajdhani:wght@600;700&display=swap rel=stylesheet>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #060714;
+      color: #fff;
+      font-family: 'Rajdhani', sans-serif;
+      padding: 40px 20px;
+      text-align: center;
+    }
+    h1 {
+      font-family: 'Orbitron', monospace;
+      font-size: 32px;
+      margin-bottom: 8px;
+      background: linear-gradient(135deg, #00f0ff, #ff007f);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    p.subtitle {
+      color: #94a3b8;
+      font-size: 18px;
+      margin-bottom: 40px;
+    }
+    .options-grid {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      flex-wrap: wrap;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    .option-card {
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid rgba(0, 240, 255, 0.3);
+      border-radius: 20px;
+      padding: 30px;
+      width: 420px;
+      box-shadow: 0 0 30px rgba(0, 240, 255, 0.1);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .option-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 0 40px rgba(0, 240, 255, 0.3);
+      border-color: #00f0ff;
+    }
+    .option-title {
+      font-family: 'Orbitron', monospace;
+      font-size: 22px;
+      margin-bottom: 15px;
+      color: #00f0ff;
+    }
+    .preview-row {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+    .preview-box {
+      text-align: center;
+    }
+    .preview-label {
+      font-size: 13px;
+      color: #64748b;
+      margin-top: 6px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    /* Square Preview */
+    .icon-square {
+      width: 160px;
+      height: 160px;
+      border-radius: 28px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+      object-fit: cover;
+    }
+    /* Round / Android Circle Preview */
+    .icon-circle {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+      object-fit: cover;
+    }
+    .features-list {
+      text-align: left;
+      font-size: 15px;
+      color: #cbd5e1;
+      line-height: 1.6;
+      background: rgba(0, 0, 0, 0.3);
+      padding: 15px 20px;
+      border-radius: 10px;
+      margin-top: 15px;
+    }
+    .features-list li {
+      margin-left: 20px;
+      margin-bottom: 6px;
+    }
+  </style>
+</head>
+<body>
+  <h1>DISC RUN &bull; APP ICON SELECTION</h1>
+  <p class=subtitle>Both options fill the entire circle / square with zero empty white space!</p>
+
+  <div class=options-grid>
+    
+    <!-- OPTION 1 -->
+    <div class=option-card>
+      <h2 class=option-title>OPTION 1: NEON CYBER RUNNER</h2>
+      <div class=preview-row>
+        <div class=preview-box>
+          <img src=icon_option_1.jpg class=icon-square alt=Option 1 Square>
+          <div class=preview-label>Squircle / Store</div>
+        </div>
+        <div class=preview-box>
+          <img src=icon_option_1.jpg class=icon-circle alt=Option 1 Circle>
+          <div class=preview-label>Android Circle</div>
+        </div>
+      </div>
+      <ul class=features-list>
+        <li><strong>Style:</strong> Dynamic 3D Action & Motion</li>
+        <li><strong>Colors:</strong> Hot Magenta & Electric Cyan Neon Rings</li>
+        <li><strong>Subject:</strong> Cyber Runner sprinting across the spinning turntable</li>
+        <li><strong>Coverage:</strong> 100% Full Bleed (Zero white space)</li>
+      </ul>
+    </div>
+
+    <!-- OPTION 2 -->
+    <div class=option-card>
+      <h2 class=option-title>OPTION 2: HOLOGRAPHIC DISC CREST</h2>
+      <div class=preview-row>
+        <div class=preview-box>
+          <img src=icon_option_2.jpg class=icon-square alt=Option 2 Square>
+          <div class=preview-label>Squircle / Store</div>
+        </div>
+        <div class=preview-box>
+          <img src=icon_option_2.jpg class=icon-circle alt=Option 2 Circle>
+          <div class=preview-label>Android Circle</div>
+        </div>
+      </div>
+      <ul class=features-list>
+        <li><strong>Style:</strong> Bold Holographic Vinyl Emblem</li>
+        <li><strong>Colors:</strong> Electric Cyan & Golden Spark Pulses</li>
+        <li><strong>Subject:</strong> Turntable grooves with geometric runner silhouette</li>
+        <li><strong>Typography:</strong> Integrated glowing <em>DISC RUN</em> text</li>
+      </ul>
+    </div>
+
+  </div>
+</body>
+</html>
