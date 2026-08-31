@@ -1,0 +1,18 @@
+
+
+
+http://192.168.1.177:8080
+Disc Run: 3D Endless Runner
+https://natefoldan.github.io/disc-run-game/
+package id: com.coniferstudios.discrun
+
+
+
+app id
+ca-app-pub-4395267773413987~5899731884
+
+banner ad unit
+ca-app-pub-4395267773413987/2921837450
+
+video ad unit
+ca-app-pub-4395267773413987/1218250842
