@@ -1906,11 +1906,18 @@ body.hide-ad-banner .ad-banner-placeholder {
   .mobile-tabs-container {
     display: flex;
   }
+  .overlay-screen {
+    padding-bottom: calc(75px + env(safe-area-inset-bottom, 20px)) !important;
+  }
   .start-panels-wrapper {
     flex-direction: column;
     align-items: center;
     max-width: 480px;
     gap: 12px;
+    padding-bottom: 25px;
+  }
+  .menu-footer-actions {
+    margin-bottom: 25px;
   }
   .main-menu-panel, .workshop-panel {
     max-width: 100%;
